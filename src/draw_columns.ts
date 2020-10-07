@@ -23,72 +23,56 @@ export const draw_header = function (column, i, vTmpRow, vTaskList, vEditable, v
   let vTmpCell, vTmpDiv;
 
   if ('vShowRes' === column) {
-    vTmpCell = newNode(vTmpRow, 'td', null, 'gresource');
-    const text = makeInput(vTaskList[i].getResource(), vEditable, 'resource', vTaskList[i].getResource(), vResources);
-    vTmpDiv = newNode(vTmpCell, 'div', null, null, text);
-    const callback = (task, e) => task.setResource(e.target.value);
-    addListenerInputCell(vTmpCell, vEventsChange, callback, vTaskList, i, 'res', Draw, 'change');
-    addListenerClickCell(vTmpCell, vEvents, vTaskList[i], 'res');
+    draw_normal_item(vTmpRow,'gresource',
+                     vTaskList[i].getResource(),vEditable,'resource',vTaskList[i].getResource(),vResources, 
+                     (task, e) => task.setResource(e.target.value),
+                     vEventsChange, vEvents, vTaskList, i, 'res', Draw,'change');
   }
   if ('vShowDur' === column) {
-    vTmpCell = newNode(vTmpRow, 'td', null, 'gduration');
-    const text = makeInput(vTaskList[i].getDuration(vFormat, vLangs[vLang]), vEditable, 'text', vTaskList[i].getDuration());
-    vTmpDiv = newNode(vTmpCell, 'div', null, null, text);
-    const callback = (task, e) => task.setDuration(e.target.value);
-    addListenerInputCell(vTmpCell, vEventsChange, callback, vTaskList, i, 'dur', Draw);
-    addListenerClickCell(vTmpCell, vEvents, vTaskList[i], 'dur');
+    draw_normal_item(vTmpRow,'gduration',
+                     vTaskList[i].getDuration(vFormat, vLangs[vLang]),vEditable,'text',vTaskList[i].getDuration(),null,
+                     (task, e) => task.setDuration(e.target.value),
+                     vEventsChange, vEvents, vTaskList, i, 'dur', Draw);
   }
   if ('vShowComp' === column) {
-    vTmpCell = newNode(vTmpRow, 'td', null, 'gpccomplete');
-    const text = makeInput(vTaskList[i].getCompStr(), vEditable, 'percentage', vTaskList[i].getCompVal());
-    vTmpDiv = newNode(vTmpCell, 'div', null, null, text);
-    const callback = (task, e) => { task.setComp(e.target.value); task.setCompVal(e.target.value); }
-    addListenerInputCell(vTmpCell, vEventsChange, callback, vTaskList, i, 'comp', Draw);
-    addListenerClickCell(vTmpCell, vEvents, vTaskList[i], 'comp');
+    draw_normal_item(vTmpRow,'gpccomplete',
+                     vTaskList[i].getCompStr(),vEditable,'percentage',vTaskList[i].getCompVal(),null,
+                     (task, e) => { task.setComp(e.target.value); task.setCompVal(e.target.value); },
+                     vEventsChange, vEvents, vTaskList, i, 'comp', Draw);
   }
   if ('vShowStartDate' === column) {
-    vTmpCell = newNode(vTmpRow, 'td', null, 'gstartdate');
-    const v = formatDateStr(vTaskList[i].getStartVar(), vDateTaskTableDisplayFormat, vLangs[vLang]);
-    const text = makeInput(v, vEditable, 'date', vTaskList[i].getStartVar());
-    vTmpDiv = newNode(vTmpCell, 'div', null, null, text);
-    const callback = (task, e) => task.setStart(e.target.value);
-    addListenerInputCell(vTmpCell, vEventsChange, callback, vTaskList, i, 'start', Draw);
-    addListenerClickCell(vTmpCell, vEvents, vTaskList[i], 'start');
+    const v = formatDateStr(vTaskList[i].getStartVar(), vDateTaskTableDisplayFormat, vLangs[vLang])
+    draw_normal_item(vTmpRow,'gstartdate',
+                     v,vEditable,'date',vTaskList[i].getStartVar(),null,
+                     (task, e) => task.setStart(e.target.value),
+                     vEventsChange, vEvents, vTaskList, i, 'start', Draw);
   }
   if ('vShowEndDate' === column) {
-    vTmpCell = newNode(vTmpRow, 'td', null, 'genddate');
     const v = formatDateStr(vTaskList[i].getEndVar(), vDateTaskTableDisplayFormat, vLangs[vLang]);
-    const text = makeInput(v, vEditable, 'date', vTaskList[i].getEndVar());
-    vTmpDiv = newNode(vTmpCell, 'div', null, null, text);
-    const callback = (task, e) => task.setEnd(e.target.value);
-    addListenerInputCell(vTmpCell, vEventsChange, callback, vTaskList, i, 'end', Draw);
-    addListenerClickCell(vTmpCell, vEvents, vTaskList[i], 'end');
+    draw_normal_item(vTmpRow,'genddate',
+                     v,vEditable,'date',vTaskList[i].getEndVar(),null,
+                     (task, e) => task.setEnd(e.target.value),
+                     vEventsChange, vEvents, vTaskList, i, 'end', Draw);
   }
   if ('vShowPlanStartDate' === column) {
-    vTmpCell = newNode(vTmpRow, 'td', null, 'gplanstartdate');
     const v = vTaskList[i].getPlanStart() ? formatDateStr(vTaskList[i].getPlanStart(), vDateTaskTableDisplayFormat, vLangs[vLang]) : '';
-    const text = makeInput(v, vEditable, 'date', vTaskList[i].getPlanStart());
-    vTmpDiv = newNode(vTmpCell, 'div', null, null, text);
-    const callback = (task, e) => task.setPlanStart(e.target.value);
-    addListenerInputCell(vTmpCell, vEventsChange, callback, vTaskList, i, 'planstart', Draw);
-    addListenerClickCell(vTmpCell, vEvents, vTaskList[i], 'planstart');
+    draw_normal_item(vTmpRow,'gplanstartdate',
+                     v,vEditable,'date',vTaskList[i].getPlanStart(),null,
+                     (task, e) => task.setPlanStart(e.target.value),
+                     vEventsChange, vEvents, vTaskList, i, 'planstart', Draw);
   }
   if ('vShowPlanEndDate' === column) {
-    vTmpCell = newNode(vTmpRow, 'td', null, 'gplanenddate');
     const v = vTaskList[i].getPlanEnd() ? formatDateStr(vTaskList[i].getPlanEnd(), vDateTaskTableDisplayFormat, vLangs[vLang]) : '';
-    const text = makeInput(v, vEditable, 'date', vTaskList[i].getPlanEnd());
-    vTmpDiv = newNode(vTmpCell, 'div', null, null, text);
-    const callback = (task, e) => task.setPlanEnd(e.target.value);
-    addListenerInputCell(vTmpCell, vEventsChange, callback, vTaskList, i, 'planend', Draw);
-    addListenerClickCell(vTmpCell, vEvents, vTaskList[i], 'planend');
+    draw_normal_item(vTmpRow,'gplanenddate',
+                     v,vEditable,'date',vTaskList[i].getPlanEnd(),null,
+                     (task, e) => task.setPlanEnd(e.target.value),
+                     vEventsChange, vEvents, vTaskList, i, 'planend', Draw);
   }
   if ('vShowCost' === column) {
-    vTmpCell = newNode(vTmpRow, 'td', null, 'gcost');
-    const text = makeInput(vTaskList[i].getCost(), vEditable, 'cost');
-    vTmpDiv = newNode(vTmpCell, 'div', null, null, text);
-    const callback = (task, e) => task.setCost(e.target.value);
-    addListenerInputCell(vTmpCell, vEventsChange, callback, vTaskList, i, 'cost', Draw);
-    addListenerClickCell(vTmpCell, vEvents, vTaskList[i], 'cost');
+    draw_normal_item(vTmpRow,'gcost',
+                     vTaskList[i].getCost(),vEditable,'cost',null,null,
+                     (task, e) => task.setCost(e.target.value),
+                     vEventsChange, vEvents, vTaskList, i, 'cost', Draw);
   }
 
 
@@ -118,6 +102,16 @@ export const draw_header = function (column, i, vTmpRow, vTaskList, vEditable, v
     addListenerClickCell(vTmpCell, vEvents, vTaskList[i], 'addentries');
   }
 };
+
+const draw_normal_item = function (vTmpRow, pID, dataFormat, vEditable, dataType, data2show, choices, callback,
+  vEventsChange, vEvents, vTaskList, i, column, draw = null, event = null) {
+  let vTmpCell = newNode(vTmpRow, 'td', null, pID);
+  const text = makeInput(dataFormat, vEditable, dataType, data2show, choices);
+  newNode(vTmpCell, 'div', null, null, text);
+  addListenerInputCell(vTmpCell, vEventsChange, callback, vTaskList, i, column, draw, event);
+  addListenerClickCell(vTmpCell, vEvents, vTaskList[i], column);
+  return vTmpCell;
+}
 
 export const draw_bottom = function (column, vTmpRow, vAdditionalHeaders) {
   if ('vShowRes' === column) newNode(vTmpRow, 'td', null, 'gspanning gresource', '\u00A0');
