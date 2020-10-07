@@ -7,14 +7,14 @@ function start(e) {
   g = new JSGantt.GanttChart(document.getElementById('embedded-Gantt'), 'week');
   if (g.getDivId() != null) {
 
-    const newDataurl = document.getElementById('dataurl').value ? document.getElementById('dataurl').value : './fixes/data.json';
+    const newDataurl = document.getElementById('dataurl').value ? document.getElementById('dataurl').value : 'https://raw.githubusercontent.com/jsGanttImproved/jsgantt-improved/master/docs/fixes/data.json'//'https://raw.githubusercontent.com/jsGanttImproved/jsgantt-improved/master/docs/fixes/bigdata.json';
     const vDebug = document.querySelector('#debug:checked') ? true : false;
     //vDebug = true;
     const vEditable = document.querySelector('#editable:checked') ? true : false;
     const vUseSort = document.querySelector('#sort:checked') ? true : false;
     const newtooltiptemplate = document.getElementById('tooltiptemplate').value ? document.getElementById('tooltiptemplate').value : null;
     let vColumnOrder;
-    if (document.querySelector('#vColumnOrder').value) {
+    if (document.querySelector('#vColumnOrder') && document.querySelector('#vColumnOrder').value) {
       vColumnOrder = document.querySelector('#vColumnOrder').value.split(',')
     }
 
@@ -38,12 +38,12 @@ function start(e) {
     vShowPlanEndDate = document.querySelector('#vShowPlanEndDate:checked') ? 1 : 0;
     vShowTaskInfoLink = document.querySelector('#vShowTaskInfoLink:checked') ? 1 : 0;
     vShowEndWeekDate = document.querySelector('#vShowEndWeekDate:checked') ? 1 : 0;
-    vTotalHeight = document.querySelector('#vTotalHeight').value || undefined;
+    vTotalHeight = document.querySelector('#vTotalHeight') ? document.querySelector('#vTotalHeight').value : undefined;
 
     vShowWeekends = document.querySelector('#vShowWeekends:checked') ? 1 : 0;
 
-    vMinDate = document.querySelector('#vMinDate').value;
-    vMaxDate = document.querySelector('#vMaxDate').value;
+    vMinDate = document.querySelector('#vMinDate') ? document.querySelector('#vMinDate').value : undefined;
+    vMaxDate = document.querySelector('#vMaxDate') ? document.querySelector('#vMaxDate').value : undefined;
 
     vAdditionalHeaders = {
       category: {
