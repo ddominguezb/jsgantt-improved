@@ -38,8 +38,8 @@
   <link href="https://fonts.googleapis.com/css?family=Cookie|Satisfy|Kelly+Slab|Overlock" rel="stylesheet">
 
   <!-- jsGanttImproved App -->
-  <link href="jsgantt.css" rel="stylesheet" type="text/css" />
-  <script src="jsgantt.js" type="text/javascript"></script>
+  <link href="../dist/jsgantt.css" rel="stylesheet" type="text/css" />
+  <script src="../dist/jsgantt.js" type="text/javascript"></script>
 </head>
 
 <!-- Content -->
@@ -67,8 +67,8 @@
       </span>
 
       <span>
-        <label for="vShowAddEntries">Cost</label>
-        <input type="checkbox" id="vShowAddEntries" checked onchange="start(event)" />
+        <label for="vShowAddEntries">Add Entries</label>
+        <input type="checkbox" id="vShowAddEntries" unchecked onchange="start(event)" />
       </span>
 
       <span>
@@ -130,8 +130,9 @@
   </select>
 
   <br />
-  Data getting from a URL, <a href="fixes/data.json">JSON Data</a>. Use `bigdata.json` to test with more data.
-  <input id="dataurl" onchange="start(event)" value="./fixes/bigdata.json" type="text">
+  Data getting from a URL, <a href="fixes/data.json">JSON Data</a>. Use `bigdata.json` to test with more data. https://raw.githubusercontent.com/jsGanttImproved/jsgantt-improved/master/docs/fixes/data.json
+  <input id="dataurl" onchange="start(event)" value="https://raw.githubusercontent.com/jsGanttImproved/jsgantt-improved/master/docs/fixes/data.json" type="text">
+  <!--<input id="dataurl" onchange="start(event)" value="https://raw.githubusercontent.com/jsGanttImproved/jsgantt-improved/master/docs/fixes/bigdata.json" type="text">-->
   <br />
 
   Delay for tooltip to hide (in ms): <input id="delay" onchange="start(event)" value="150" type="number">
