@@ -33,7 +33,8 @@ export const makeInput = function (formattedValue, editable, type = 'text', valu
 }
 
 export const newNode = function (pParent, pNodeType, pId = null, pClass = null, pText = null,
-  pWidth = null, pLeft = null, pDisplay = null, pColspan = null, pAttribs = null) {
+  pWidth = null, pLeft = null, pDisplay = null, pColspan = null, pAttribs = null, 
+  pPosition = null, pTop = null, pHeight = null) {
   let vNewNode = pParent.appendChild(document.createElement(pNodeType));
   if (pAttribs) {
     for (let i = 0; i + 1 < pAttribs.length; i += 2) {
@@ -43,7 +44,10 @@ export const newNode = function (pParent, pNodeType, pId = null, pClass = null, 
   if (pId) vNewNode.id = pId; // I wish I could do this with setAttribute but older IEs don't play nice
   if (pClass) vNewNode.className = pClass;
   if (pWidth) vNewNode.style.width = (isNaN(pWidth * 1)) ? pWidth : pWidth + 'px';
+  if (pHeight) vNewNode.style.height = (isNaN(pHeight * 1)) ? pHeight : pHeight + 'px';
   if (pLeft) vNewNode.style.left = (isNaN(pLeft * 1)) ? pLeft : pLeft + 'px';
+  if (pTop) vNewNode.style.top = (isNaN(pTop * 1)) ? pTop : pTop + 'px';
+  if (pPosition) vNewNode.style.position = pPosition;
   if (pText) {
     if (pText.indexOf && pText.indexOf('<') === -1) {
       vNewNode.appendChild(document.createTextNode(pText));

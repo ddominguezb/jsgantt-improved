@@ -216,11 +216,13 @@ export const GanttChart = function (pDiv, pFormat) {
 
   this.drawListBody = function (vLeftHeader) {
     let vTmpContentTabOuterWrapper = newNode(vLeftHeader, 'div', null, 'gtasktableouterwrapper');
-    let vTmpContentTabWrapper = newNode(vTmpContentTabOuterWrapper, 'div', null, 'gtasktablewrapper');
+    let vTmpContentTabWrapper = newNode(vTmpContentTabOuterWrapper, 'div', null, 'gtasktablewrapper', null, null, null, null, null, null, 'relative');
     vTmpContentTabWrapper.style.width = `calc(100% + ${getScrollbarWidth()}px)`;
-    let vTmpContentTab = newNode(vTmpContentTabWrapper, 'table', null, 'gtasktable');
-    let vTmpContentTBody = newNode(vTmpContentTab, 'tbody');
+    /*let vTmpContentTab = newNode(vTmpContentTabWrapper, 'table', null, 'gtasktable');
+    let vTmpContentTBody = newNode(vTmpContentTab, 'tbody');*/
     let vNumRows = 0;
+    let startRow = 0;
+    let top = startRow * this.vRowHeight;
     for (let i = 0; i < this.vTaskList.length; i++) {
       let vBGColor;
       if (this.vTaskList[i].getGroup() == 1) vBGColor = 'ggroupitem';
@@ -228,13 +230,14 @@ export const GanttChart = function (pDiv, pFormat) {
 
       let vID = this.vTaskList[i].getID();
       let vTmpRow, vTmpCell;
-      if ((!(this.vTaskList[i].getParItem() && this.vTaskList[i].getParItem().getGroup() == 2)) || this.vTaskList[i].getGroup() == 2) {
-        if (this.vTaskList[i].getVisible() == 0) vTmpRow = newNode(vTmpContentTBody, 'tr', this.vDivId + 'child_' + vID, 'gname ' + vBGColor, null, null, null, 'none');
-        else vTmpRow = newNode(vTmpContentTBody, 'tr', this.vDivId + 'child_' + vID, 'gname ' + vBGColor);
+      if ((!(this.vTaskList[i].getParItem() && this.vTaskList[i].getParItem().getGroup() == 2)) || this.vTaskList[i].getGroup() == 2 || this.vTaskList[i].getVisible() != 0) {
+        /*if (this.vTaskList[i].getVisible() == 0) vTmpRow = newNode(vTmpContentTabWrapper, 'div', this.vDivId + 'child_' + vID, 'gname ' + vBGColor, null, null, null, 'none',null,null,'absolute',top);
+        else vTmpRow = newNode(vTmpContentTabWrapper, 'div', this.vDivId + 'child_' + vID, 'gname ' + vBGColor, null, null, null, null, null, null, 'absolute', top);*/
+        vTmpRow = newNode(vTmpContentTabWrapper, 'div', this.vDivId + 'child_' + vID, 'gname ' + vBGColor, null, null, null, null, null, null, 'absolute', top);
         this.vTaskList[i].setListChildRow(vTmpRow);
-        newNode(vTmpRow, 'td', null, 'gtasklist', '\u00A0');
+        newNode(vTmpRow, 'div', null, 'gtasklist', '\u00A0', null, null,'inline-block');
         const editableClass = this.vEditable ? 'gtaskname gtaskeditable' : 'gtaskname';
-        vTmpCell = newNode(vTmpRow, 'td', null, editableClass);
+        vTmpCell = newNode(vTmpRow, 'div', null, editableClass, null, null, null, 'inline-block');
 
         let vCellContents = '';
         for (let j = 1; j < this.vTaskList[i].getLevel(); j++) {
@@ -288,13 +291,15 @@ export const GanttChart = function (pDiv, pFormat) {
         });
 
         vNumRows++;
+        top += this.vRowHeight;
       }
+      
     }
 
     // DRAW the date format selector at bottom left.
-    let vTmpRow = newNode(vTmpContentTBody, 'tr');
-    newNode(vTmpRow, 'td', null, 'gtasklist', '\u00A0');
-    let vTmpCell = newNode(vTmpRow, 'td', null, 'gspanning gtaskname');
+    let vTmpRow = newNode(vTmpContentTabWrapper, 'div',null,null,null,null,null,null,null,null,'absolute',top,this.vRowHeight);
+    newNode(vTmpRow, 'div', null, 'gtasklist', '\u00A0', null, null,'inline-block');
+    let vTmpCell = newNode(vTmpRow, 'div', null, 'gspanning gtaskname',null, null, null,'inline-block');
     vTmpCell.appendChild(this.drawSelector('bottom'));
 
     this.getColumnOrder().forEach(column => {
@@ -302,6 +307,8 @@ export const GanttChart = function (pDiv, pFormat) {
         draw_bottom(column, vTmpRow, this.vAdditionalHeaders)
       }
     });
+
+    vTmpContentTabWrapper.style.height = ((vNumRows+1)*this.vRowHeight) + 'px';
 
     // Add some white space so the vertical scroll distance should always be greater
     // than for the right pane (keep to a minimum as it is seen in unconstrained height designs)
@@ -539,7 +546,7 @@ export const GanttChart = function (pDiv, pFormat) {
       let vCaptClass = null;
       // set cell width only for first row because of table-layout:fixed
       let taskCellWidth = i === 0 ? vColWidth : null;
-      if (this.vTaskList[i].getMile() && !vComb) {
+      if (this.vTaskList[i].getMile() && !vComb && this.vTaskList[i].getListChildRow()) {
         let vTmpRow = newNode(vTmpTBody, 'tr', this.vDivId + 'childrow_' + vID, 'gmileitem gmile' + this.vFormat, null, null, null, ((this.vTaskList[i].getVisible() == 0) ? 'none' : null));
         this.vTaskList[i].setChildRow(vTmpRow);
         addThisRowListeners(this, this.vTaskList[i].getListChildRow(), vTmpRow);
@@ -566,7 +573,7 @@ export const GanttChart = function (pDiv, pFormat) {
           this.drawColsChart(vNumCols, vTmpRow, taskCellWidth)
         }
       }
-      else {
+      else if (this.vTaskList[i].getListChildRow()){
         let vTaskWidth = vTaskRightPx;
 
         // Draw Group Bar which has outer div with inner group div 
@@ -661,31 +668,35 @@ export const GanttChart = function (pDiv, pFormat) {
         }
       }
 
-      if (this.getCaptionType() && vCaptClass !== null) {
-        let vCaptionStr: any;
-        switch (this.getCaptionType()) {
-          case 'Caption': vCaptionStr = vTmpItem.getCaption(); break;
-          case 'Resource': vCaptionStr = vTmpItem.getResource(); break;
-          case 'Duration': vCaptionStr = vTmpItem.getDuration(this.vFormat, this.vLangs[this.vLang]); break;
-          case 'Complete': vCaptionStr = vTmpItem.getCompStr(); break;
+      if (vTmpDiv){
+        if (this.getCaptionType() && vCaptClass !== null) {
+          let vCaptionStr: any;
+          switch (this.getCaptionType()) {
+            case 'Caption': vCaptionStr = vTmpItem.getCaption(); break;
+            case 'Resource': vCaptionStr = vTmpItem.getResource(); break;
+            case 'Duration': vCaptionStr = vTmpItem.getDuration(this.vFormat, this.vLangs[this.vLang]); break;
+            case 'Complete': vCaptionStr = vTmpItem.getCompStr(); break;
+          }
+          newNode(vTmpDiv, 'div', null, vCaptClass, vCaptionStr, 120, (vCaptClass == 'gmilecaption') ? 12 : 0);
         }
-        newNode(vTmpDiv, 'div', null, vCaptClass, vCaptionStr, 120, (vCaptClass == 'gmilecaption') ? 12 : 0);
+  
+        // Add Task Info div for tooltip
+        if (this.vTaskList[i].getTaskDiv() && vTmpDiv) {
+          const vTmpDiv2 = newNode(vTmpDiv, 'div', this.vDivId + 'tt' + vID, null, null, null, null, 'none');
+          const { component, callback } = this.createTaskInfo(this.vTaskList[i], this.vTooltipTemplate);
+          vTmpDiv2.appendChild(component);
+          addTooltipListeners(this, this.vTaskList[i].getTaskDiv(), vTmpDiv2, callback);
+        }
+        // Add Plan Task Info div for tooltip
+        if (this.vTaskList[i].getPlanTaskDiv() && vTmpDiv) {
+          const vTmpDiv2 = newNode(vTmpDiv, 'div', this.vDivId + 'tt' + vID, null, null, null, null, 'none');
+          const { component, callback } = this.createTaskInfo(this.vTaskList[i], this.vTooltipTemplate);
+          vTmpDiv2.appendChild(component);
+          addTooltipListeners(this, this.vTaskList[i].getPlanTaskDiv(), vTmpDiv2, callback);
+        }
       }
 
-      // Add Task Info div for tooltip
-      if (this.vTaskList[i].getTaskDiv() && vTmpDiv) {
-        const vTmpDiv2 = newNode(vTmpDiv, 'div', this.vDivId + 'tt' + vID, null, null, null, null, 'none');
-        const { component, callback } = this.createTaskInfo(this.vTaskList[i], this.vTooltipTemplate);
-        vTmpDiv2.appendChild(component);
-        addTooltipListeners(this, this.vTaskList[i].getTaskDiv(), vTmpDiv2, callback);
-      }
-      // Add Plan Task Info div for tooltip
-      if (this.vTaskList[i].getPlanTaskDiv() && vTmpDiv) {
-        const vTmpDiv2 = newNode(vTmpDiv, 'div', this.vDivId + 'tt' + vID, null, null, null, null, 'none');
-        const { component, callback } = this.createTaskInfo(this.vTaskList[i], this.vTooltipTemplate);
-        vTmpDiv2.appendChild(component);
-        addTooltipListeners(this, this.vTaskList[i].getPlanTaskDiv(), vTmpDiv2, callback);
-      }
+      
     }
 
     // Include the footer with the days/week/month...
