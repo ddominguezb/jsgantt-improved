@@ -144,6 +144,7 @@ export const GanttChart = function (pDiv, pFormat) {
   this.vChartBody = null;
   this.vChartHead = null;
   this.vListBody = null;
+  this.vListContainer = null;
   this.vChartTable = null;
   this.vLines = null;
   this.vTimer = 20;
@@ -195,16 +196,17 @@ export const GanttChart = function (pDiv, pFormat) {
     let vTmpDiv = newNode(vLeftHeader, 'div', this.vDivId + 'glisthead', 'glistlbl gcontainercol');
     const gListLbl = vTmpDiv;
     this.setListBody(vTmpDiv);
-    let vTmpTab = newNode(vTmpDiv, 'table', null, 'gtasktableh');
-    let vTmpTBody = newNode(vTmpTab, 'tbody');
-    let vTmpRow = newNode(vTmpTBody, 'tr');
-    newNode(vTmpRow, 'td', null, 'gtasklist', '\u00A0');
-    let vTmpCell = newNode(vTmpRow, 'td', null, 'gspanning gtaskname', null, null, null, null, this.getColumnOrder().length + 1);
+    /*let vTmpTab = newNode(vTmpDiv, 'table', null, 'gtasktableh');
+    let vTmpTBody = newNode(vTmpTab, 'tbody');*/
+    let vTmpTBody = newNode(vTmpDiv, 'div',null,'gtasktableh gvs-tablehader');
+    let vTmpRow = newNode(vTmpTBody, 'div',null,'gvs-row');
+    newNode(vTmpRow, 'div', null, 'gtasklist no-borders', '\u00A0');
+    let vTmpCell = newNode(vTmpRow, 'div', null, 'gtaskname no-borders', null, null, null, null, this.getColumnOrder().length + 1);
     vTmpCell.appendChild(this.drawSelector('top'));
 
-    vTmpRow = newNode(vTmpTBody, 'tr');
-    newNode(vTmpRow, 'td', null, 'gtasklist', '\u00A0');
-    newNode(vTmpRow, 'td', null, 'gtaskname', '\u00A0');
+    vTmpRow = newNode(vTmpTBody, 'div', null, 'gvs-row');
+    newNode(vTmpRow, 'div', null, 'gtasklist', '\u00A0');
+    newNode(vTmpRow, 'div', null, 'gtaskname', '\u00A0');
 
     this.getColumnOrder().forEach(column => {
       if (this[column] == 1 || column === 'vAdditionalHeaders') {
@@ -216,28 +218,45 @@ export const GanttChart = function (pDiv, pFormat) {
 
   this.drawListBody = function (vLeftHeader) {
     let vTmpContentTabOuterWrapper = newNode(vLeftHeader, 'div', null, 'gtasktableouterwrapper');
-    let vTmpContentTabWrapper = newNode(vTmpContentTabOuterWrapper, 'div', null, 'gtasktablewrapper', null, null, null, null, null, null, 'relative');
-    vTmpContentTabWrapper.style.width = `calc(100% + ${getScrollbarWidth()}px)`;
+    this.vListContainer = newNode(vTmpContentTabOuterWrapper, 'div', null, 'gtasktablewrapper', null, null, null, null, null, null, 'relative');
+    this.vListContainer.style.width = `calc(100% + ${getScrollbarWidth()}px)`;
     /*let vTmpContentTab = newNode(vTmpContentTabWrapper, 'table', null, 'gtasktable');
     let vTmpContentTBody = newNode(vTmpContentTab, 'tbody');*/
+    
+    let vNumRows = this.updateListContainer();
+
+    return {
+      vNumRows,
+      vTmpContentTabWrapper: this.vListContainer
+    };
+  }
+
+  this.updateListContainer = function (startIdxItem=null){
+    //if (!startIdxItem) startIdxItem=0; Se usara cuando se haga el virtual scroll y para optimizar la actualizacion de la vista
     let vNumRows = 0;
     let startRow = 0;
+    let vTmpRow, vTmpCell;
     let top = startRow * this.vRowHeight;
+
+    //Limpiamos los hijos existentes
+    while (this.vListContainer.firstChild) {
+      this.vListContainer.removeChild(this.vListContainer.firstChild);
+    }
+
     for (let i = 0; i < this.vTaskList.length; i++) {
       let vBGColor;
       if (this.vTaskList[i].getGroup() == 1) vBGColor = 'ggroupitem';
       else vBGColor = 'glineitem';
 
       let vID = this.vTaskList[i].getID();
-      let vTmpRow, vTmpCell;
       if (((!(this.vTaskList[i].getParItem() && this.vTaskList[i].getParItem().getGroup() == 2)) || this.vTaskList[i].getGroup() == 2) && this.vTaskList[i].getVisible() != 0) {
         /*if (this.vTaskList[i].getVisible() == 0) vTmpRow = newNode(vTmpContentTabWrapper, 'div', this.vDivId + 'child_' + vID, 'gname ' + vBGColor, null, null, null, 'none',null,null,'absolute',top);
         else vTmpRow = newNode(vTmpContentTabWrapper, 'div', this.vDivId + 'child_' + vID, 'gname ' + vBGColor, null, null, null, null, null, null, 'absolute', top);*/
-        vTmpRow = newNode(vTmpContentTabWrapper, 'div', this.vDivId + 'child_' + vID, 'gname ' + vBGColor, null, null, null, null, null, null, 'absolute', top);
+        vTmpRow = newNode(this.vListContainer, 'div', this.vDivId + 'child_' + vID, 'gvs-row gname ' + vBGColor, null, null, null, null, null, null, 'absolute', top);
         this.vTaskList[i].setListChildRow(vTmpRow);
-        newNode(vTmpRow, 'div', null, 'gtasklist', '\u00A0', null, null,'inline-block');
+        newNode(vTmpRow, 'div', null, 'gtasklist', '\u00A0');
         const editableClass = this.vEditable ? 'gtaskname gtaskeditable' : 'gtaskname';
-        vTmpCell = newNode(vTmpRow, 'div', null, editableClass, null, null, null, 'inline-block');
+        vTmpCell = newNode(vTmpRow, 'div', null, editableClass);
 
         let vCellContents = '';
         for (let j = 1; j < this.vTaskList[i].getLevel(); j++) {
@@ -297,9 +316,9 @@ export const GanttChart = function (pDiv, pFormat) {
     }
 
     // DRAW the date format selector at bottom left.
-    let vTmpRow = newNode(vTmpContentTabWrapper, 'div',null,null,null,null,null,null,null,null,'absolute',top,this.vRowHeight);
-    newNode(vTmpRow, 'div', null, 'gtasklist', '\u00A0', null, null,'inline-block');
-    let vTmpCell = newNode(vTmpRow, 'div', null, 'gspanning gtaskname',null, null, null,'inline-block');
+    vTmpRow = newNode(this.vListContainer, 'div',null,'gvs-row',null,null,null,null,null,null,'absolute',top,this.vRowHeight);
+    newNode(vTmpRow, 'div', null, 'gtasklist', '\u00A0');
+    vTmpCell = newNode(vTmpRow, 'div', null, 'gspanning gtaskname');
     vTmpCell.appendChild(this.drawSelector('bottom'));
 
     this.getColumnOrder().forEach(column => {
@@ -308,17 +327,13 @@ export const GanttChart = function (pDiv, pFormat) {
       }
     });
 
-    vTmpContentTabWrapper.style.height = ((vNumRows+1)*this.vRowHeight) + 'px';
+    this.vListContainer.style.height = ((vNumRows+2)*this.vRowHeight) + 'px';
 
     // Add some white space so the vertical scroll distance should always be greater
     // than for the right pane (keep to a minimum as it is seen in unconstrained height designs)
     // newNode(vTmpDiv2, 'br');
     // newNode(vTmpDiv2, 'br');
-
-    return {
-      vNumRows,
-      vTmpContentTabWrapper
-    };
+    return vNumRows;
   }
 
   /**

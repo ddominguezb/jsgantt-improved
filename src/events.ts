@@ -288,6 +288,7 @@ export const addFolderListeners = function (pGanttChart, pObj, pID) {
   addListener('click', function () {
     folder(pID, pGanttChart);
     updateGridHeaderWidth(pGanttChart);
+    pGanttChart.updateListContainer(pID);
   }, pObj);
 };
 
