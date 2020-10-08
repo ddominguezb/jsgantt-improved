@@ -230,7 +230,7 @@ export const GanttChart = function (pDiv, pFormat) {
 
       let vID = this.vTaskList[i].getID();
       let vTmpRow, vTmpCell;
-      if ((!(this.vTaskList[i].getParItem() && this.vTaskList[i].getParItem().getGroup() == 2)) || this.vTaskList[i].getGroup() == 2 || this.vTaskList[i].getVisible() != 0) {
+      if (((!(this.vTaskList[i].getParItem() && this.vTaskList[i].getParItem().getGroup() == 2)) || this.vTaskList[i].getGroup() == 2) && this.vTaskList[i].getVisible() != 0) {
         /*if (this.vTaskList[i].getVisible() == 0) vTmpRow = newNode(vTmpContentTabWrapper, 'div', this.vDivId + 'child_' + vID, 'gname ' + vBGColor, null, null, null, 'none',null,null,'absolute',top);
         else vTmpRow = newNode(vTmpContentTabWrapper, 'div', this.vDivId + 'child_' + vID, 'gname ' + vBGColor, null, null, null, null, null, null, 'absolute', top);*/
         vTmpRow = newNode(vTmpContentTabWrapper, 'div', this.vDivId + 'child_' + vID, 'gname ' + vBGColor, null, null, null, null, null, null, 'absolute', top);
@@ -681,7 +681,7 @@ export const GanttChart = function (pDiv, pFormat) {
         }
   
         // Add Task Info div for tooltip
-        if (this.vTaskList[i].getTaskDiv() && vTmpDiv) {
+        /*if (this.vTaskList[i].getTaskDiv() && vTmpDiv) {
           const vTmpDiv2 = newNode(vTmpDiv, 'div', this.vDivId + 'tt' + vID, null, null, null, null, 'none');
           const { component, callback } = this.createTaskInfo(this.vTaskList[i], this.vTooltipTemplate);
           vTmpDiv2.appendChild(component);
@@ -693,7 +693,7 @@ export const GanttChart = function (pDiv, pFormat) {
           const { component, callback } = this.createTaskInfo(this.vTaskList[i], this.vTooltipTemplate);
           vTmpDiv2.appendChild(component);
           addTooltipListeners(this, this.vTaskList[i].getPlanTaskDiv(), vTmpDiv2, callback);
-        }
+        }*/
       }
 
       
