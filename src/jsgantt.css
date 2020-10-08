@@ -1021,7 +1021,6 @@ td.gspanning div {
 }
 .gvs-row > div {
   height: 21px !important;
-  padding: 1px;
   display: inline-flex;
   margin: -1px 0px 0px 0px;
   border-left: none;

@@ -196,10 +196,8 @@ export const GanttChart = function (pDiv, pFormat) {
     let vTmpDiv = newNode(vLeftHeader, 'div', this.vDivId + 'glisthead', 'glistlbl gcontainercol');
     const gListLbl = vTmpDiv;
     this.setListBody(vTmpDiv);
-    /*let vTmpTab = newNode(vTmpDiv, 'table', null, 'gtasktableh');
-    let vTmpTBody = newNode(vTmpTab, 'tbody');*/
-    let vTmpTBody = newNode(vTmpDiv, 'div',null,'gtasktableh gvs-tablehader');
-    let vTmpRow = newNode(vTmpTBody, 'div',null,'gvs-row');
+    let vTmpTBody = newNode(vTmpDiv, 'div', null,'gtasktableh gvs-tablehader');
+    let vTmpRow = newNode(vTmpTBody, 'div', null,'gvs-row');
     newNode(vTmpRow, 'div', null, 'gtasklist no-borders', '\u00A0');
     let vTmpCell = newNode(vTmpRow, 'div', null, 'gtaskname no-borders', null, null, null, null, this.getColumnOrder().length + 1);
     vTmpCell.appendChild(this.drawSelector('top'));
@@ -220,8 +218,6 @@ export const GanttChart = function (pDiv, pFormat) {
     let vTmpContentTabOuterWrapper = newNode(vLeftHeader, 'div', null, 'gtasktableouterwrapper');
     this.vListContainer = newNode(vTmpContentTabOuterWrapper, 'div', null, 'gtasktablewrapper', null, null, null, null, null, null, 'relative');
     this.vListContainer.style.width = `calc(100% + ${getScrollbarWidth()}px)`;
-    /*let vTmpContentTab = newNode(vTmpContentTabWrapper, 'table', null, 'gtasktable');
-    let vTmpContentTBody = newNode(vTmpContentTab, 'tbody');*/
     
     let vNumRows = this.updateListContainer();
 
@@ -346,9 +342,10 @@ export const GanttChart = function (pDiv, pFormat) {
     let vTmpDiv = newNode(vRightHeader, 'div', this.vDivId + 'gcharthead', 'gchartlbl gcontainercol');
     const gChartLbl = vTmpDiv;
     this.setChartHead(vTmpDiv);
-    let vTmpTab = newNode(vTmpDiv, 'table', this.vDivId + 'chartTableh', 'gcharttableh');
-    let vTmpTBody = newNode(vTmpTab, 'tbody');
-    let vTmpRow = newNode(vTmpTBody, 'tr');
+    /*let vTmpTab = newNode(vTmpDiv, 'table', this.vDivId + 'chartTableh', 'gcharttableh');
+    let vTmpTBody = newNode(vTmpTab, 'tbody');*/
+    let vTmpTBody = newNode(vTmpDiv, 'div', this.vDivId + 'chartTableh', 'gcharttableh gvs-tablehader');
+    let vTmpRow = newNode(vTmpTBody, 'div', null,'gvs-row');
 
     let vTmpDate = new Date();
     vTmpDate.setFullYear(vMinDate.getFullYear(), vMinDate.getMonth(), vMinDate.getDate());
@@ -371,7 +368,7 @@ export const GanttChart = function (pDiv, pFormat) {
           colspan = 5;
         }
 
-        let vTmpCell = newNode(vTmpRow, 'td', null, vHeaderCellClass, null, null, null, null, colspan);
+        let vTmpCell = newNode(vTmpRow, 'div', null, vHeaderCellClass, null, null, null, null, colspan);
         vCellContents += formatDateStr(vTmpDate, this.vDayMajorDateDisplayFormat, this.vLangs[this.vLang]);
         vTmpDate.setDate(vTmpDate.getDate() + 6);
 
@@ -382,21 +379,21 @@ export const GanttChart = function (pDiv, pFormat) {
         vTmpDate.setDate(vTmpDate.getDate() + 1);
       }
       else if (this.vFormat == 'week') {
-        const vTmpCell = newNode(vTmpRow, 'td', null, vHeaderCellClass, null, vColWidth);
+        const vTmpCell = newNode(vTmpRow, 'div', null, vHeaderCellClass, null, vColWidth);
         newNode(vTmpCell, 'div', null, null, formatDateStr(vTmpDate, this.vWeekMajorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
         vTmpDate.setDate(vTmpDate.getDate() + 7);
       }
       else if (this.vFormat == 'month') {
         vColSpan = (12 - vTmpDate.getMonth());
         if (vTmpDate.getFullYear() == vMaxDate.getFullYear()) vColSpan -= (11 - vMaxDate.getMonth());
-        const vTmpCell = newNode(vTmpRow, 'td', null, vHeaderCellClass, null, null, null, null, vColSpan);
+        const vTmpCell = newNode(vTmpRow, 'div', null, vHeaderCellClass, null, null, null, null, vColSpan);
         newNode(vTmpCell, 'div', null, null, formatDateStr(vTmpDate, this.vMonthMajorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth * vColSpan);
         vTmpDate.setFullYear(vTmpDate.getFullYear() + 1, 0, 1);
       }
       else if (this.vFormat == 'quarter') {
         vColSpan = (4 - Math.floor(vTmpDate.getMonth() / 3));
         if (vTmpDate.getFullYear() == vMaxDate.getFullYear()) vColSpan -= (3 - Math.floor(vMaxDate.getMonth() / 3));
-        const vTmpCell = newNode(vTmpRow, 'td', null, vHeaderCellClass, null, null, null, null, vColSpan);
+        const vTmpCell = newNode(vTmpRow, 'div', null, vHeaderCellClass, null, null, null, null, vColSpan);
         newNode(vTmpCell, 'div', null, null, formatDateStr(vTmpDate, this.vQuarterMajorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth * vColSpan);
         vTmpDate.setFullYear(vTmpDate.getFullYear() + 1, 0, 1);
       }
@@ -405,14 +402,14 @@ export const GanttChart = function (pDiv, pFormat) {
         if (vTmpDate.getFullYear() == vMaxDate.getFullYear() &&
           vTmpDate.getMonth() == vMaxDate.getMonth() &&
           vTmpDate.getDate() == vMaxDate.getDate()) vColSpan -= (23 - vMaxDate.getHours());
-        const vTmpCell = newNode(vTmpRow, 'td', null, vHeaderCellClass, null, null, null, null, vColSpan);
+        const vTmpCell = newNode(vTmpRow, 'div', null, vHeaderCellClass, null, null, null, null, vColSpan);
         newNode(vTmpCell, 'div', null, null, formatDateStr(vTmpDate, this.vHourMajorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth * vColSpan);
         vTmpDate.setHours(0);
         vTmpDate.setDate(vTmpDate.getDate() + 1);
       }
     }
 
-    vTmpRow = newNode(vTmpTBody, 'tr', null, 'footerdays');
+    vTmpRow = newNode(vTmpTBody, 'div', null, 'footerdays gvs-row');
 
     // Minor Date header and Cell Rows
     vTmpDate.setFullYear(vMinDate.getFullYear(), vMinDate.getMonth(), vMinDate.getDate()); // , vMinDate.getHours()
@@ -432,8 +429,8 @@ export const GanttChart = function (pDiv, pFormat) {
         }
 
         if (vTmpDate <= vMaxDate) {
-          const vTmpCell = newNode(vTmpRow, 'td', null, vMinorHeaderCellClass);
-          newNode(vTmpCell, 'div', null, null, formatDateStr(vTmpDate, this.vDayMinorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
+          const vTmpCell = newNode(vTmpRow, 'div', null, vMinorHeaderCellClass, null, vColWidth);
+          newNode(vTmpCell, 'div', null, null, formatDateStr(vTmpDate, this.vDayMinorDateDisplayFormat, this.vLangs[this.vLang]));
           vNumCols++;
         }
 
@@ -441,8 +438,8 @@ export const GanttChart = function (pDiv, pFormat) {
       }
       else if (this.vFormat == 'week') {
         if (vTmpDate <= vMaxDate) {
-          const vTmpCell = newNode(vTmpRow, 'td', null, vMinorHeaderCellClass);
-          newNode(vTmpCell, 'div', null, null, formatDateStr(vTmpDate, this.vWeekMinorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
+          const vTmpCell = newNode(vTmpRow, 'div', null, vMinorHeaderCellClass, null, vColWidth);
+          newNode(vTmpCell, 'div', null, null, formatDateStr(vTmpDate, this.vWeekMinorDateDisplayFormat, this.vLangs[this.vLang]));
           vNumCols++;
         }
 
@@ -450,8 +447,8 @@ export const GanttChart = function (pDiv, pFormat) {
       }
       else if (this.vFormat == 'month') {
         if (vTmpDate <= vMaxDate) {
-          const vTmpCell = newNode(vTmpRow, 'td', null, vMinorHeaderCellClass);
-          newNode(vTmpCell, 'div', null, null, formatDateStr(vTmpDate, this.vMonthMinorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
+          const vTmpCell = newNode(vTmpRow, 'div', null, vMinorHeaderCellClass, null, vColWidth);
+          newNode(vTmpCell, 'div', null, null, formatDateStr(vTmpDate, this.vMonthMinorDateDisplayFormat, this.vLangs[this.vLang]));
           vNumCols++;
         }
 
@@ -463,8 +460,8 @@ export const GanttChart = function (pDiv, pFormat) {
       }
       else if (this.vFormat == 'quarter') {
         if (vTmpDate <= vMaxDate) {
-          const vTmpCell = newNode(vTmpRow, 'td', null, vMinorHeaderCellClass);
-          newNode(vTmpCell, 'div', null, null, formatDateStr(vTmpDate, this.vQuarterMinorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
+          const vTmpCell = newNode(vTmpRow, 'div', null, vMinorHeaderCellClass, null, vColWidth);
+          newNode(vTmpCell, 'div', null, null, formatDateStr(vTmpDate, this.vQuarterMinorDateDisplayFormat, this.vLangs[this.vLang]));
           vNumCols++;
         }
 
@@ -476,8 +473,8 @@ export const GanttChart = function (pDiv, pFormat) {
         for (let i = vTmpDate.getHours(); i < 24; i++) {
           vTmpDate.setHours(i);//works around daylight savings but may look a little odd on days where the clock goes forward
           if (vTmpDate <= vMaxDate) {
-            const vTmpCell = newNode(vTmpRow, 'td', null, vMinorHeaderCellClass);
-            newNode(vTmpCell, 'div', null, null, formatDateStr(vTmpDate, this.vHourMinorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
+            const vTmpCell = newNode(vTmpRow, 'div', null, vMinorHeaderCellClass, null, vColWidth);
+            newNode(vTmpCell, 'div', null, null, formatDateStr(vTmpDate, this.vHourMinorDateDisplayFormat, this.vLangs[this.vLang]));
             vNumCols++;
           }
         }
@@ -493,7 +490,9 @@ export const GanttChart = function (pDiv, pFormat) {
     if (this.vFormat === 'day') {
       vTaskLeftPx += 2;
     }
-    vTmpTab.style.width = vTaskLeftPx + 'px'; // Ensure that the headings has exactly the same width as the chart grid
+    //<--------------------------------------------------- Revisa al final qu{e onda}
+    /// vTmpTBody.style.width = vTaskLeftPx + 'px'; // Ensure that the headings has exactly the same width as the chart grid
+    //------------------------------------------------------>
     // const vTaskPlanLeftPx = (vNumCols * (vColWidth + 3)) + 1;
     let vSingleCell = false;
     
