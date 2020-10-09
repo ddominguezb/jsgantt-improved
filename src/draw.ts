@@ -534,29 +534,61 @@ export const GanttChart = function (pDiv, pFormat) {
       console.info('before tasks loop', bd);
     }
 
+    // Generamos filas
     let startRow = 0;
     let top = startRow * this.vRowHeight;
     //let i;
     for (i = 0; i < this.vTaskList.length; i++) {
-      let vComb = (this.vTaskList[i].getParItem() && this.vTaskList[i].getParItem().getGroup() == 2);
-      const vID = this.vTaskList[i].getID();
-      if (this.vTaskList[i].getMile() && !vComb && this.vTaskList[i].getVisible() != 0 ) {
-        let vTmpRow = newNode(vTmpTBody, 'div', this.vDivId + 'childrow_' + vID, 'gvs-row gmileitem gmile' + this.vFormat,null,vNumCols*vColWidth,null,null,null,null,'absolute',top);
-        this.vTaskList[i].setChildRow(vTmpRow);
-        addThisRowListeners(this, this.vTaskList[i].getListChildRow(), vTmpRow);
-        top += this.vRowHeight; 
+      if (this.vTaskList[i].getVisible() != 0 ){
+        let vComb = (this.vTaskList[i].getParItem() && this.vTaskList[i].getParItem().getGroup() == 2);
+        const vID = this.vTaskList[i].getID();
+
+        let vTmpRow;
+        let rowClass = 'gvs-row ';
+
+        if (this.vTaskList[i].getMile() && !vComb) {
+          rowClass += 'gmileitem gmile' + this.vFormat;
+        } else {
+          if (this.vTaskList[i].getGroup()) {
+            rowClass += ((this.vTaskList[i].getGroup() == 2) ? 'glineitem gitem' : 'ggroupitem ggroup') + this.vFormat;
+          } else {
+            /**
+             * DRAW THE BOXES FOR GANTT
+             */
+            if (!vComb){
+              // Draw Task Bar which has colored bar div
+              rowClass += 'glineitem gitem' + this.vFormat;
+            }
+          }
+        }
+        if ( (this.vTaskList[i].getMile() && !vComb) || (this.vTaskList[i].getGroup() || !vComb) ){
+          vTmpRow = newNode(vTmpTBody, 'div', this.vDivId + 'childrow_' + vID, rowClass,null,vNumCols*vColWidth,null,null,null,null,'absolute',top);
+          this.vTaskList[i].setChildRow(vTmpRow);
+          addThisRowListeners(this, this.vTaskList[i].getListChildRow(), vTmpRow);
+          top += this.vRowHeight; 
+        }
       }
     }
 
-    //let startRow = 0;
-    let startCol = 0;
-    let left = startCol * this.itemProperties.widthPx;
-    top = startRow * this.itemProperties.heightPx;
-    //let i, j;
-    for (i = 0; i < this.vTaskList.length; i++) {
+    // Generamos la reticula
+    if (!vSingleCell){
+      //let startRow = 0;
+      let startCol = 0;
+      let left = startCol * this.itemProperties.widthPx;
+      top = startRow * this.itemProperties.heightPx;
+      //let i, j;
+      for (i = 0; i < this.vTaskList.length; i++) {
+        if (this.vTaskList[i].getVisible() != 0 ){
+          let vComb = (this.vTaskList[i].getParItem() && this.vTaskList[i].getParItem().getGroup() == 2);
+          if (!vComb){
+            this.drawColsChart(vNumCols, vTmpTBody, vColWidth, top)
+            top += this.vRowHeight;
+          }
+        }
+      }
     }
-
-
+    
+    // add taskbars
     for (i = 0; i < this.vTaskList.length; i++) {
       let curTaskStart = this.vTaskList[i].getStart() ? this.vTaskList[i].getStart() : this.vTaskList[i].getPlanStart();
       let curTaskEnd = this.vTaskList[i].getEnd() ? this.vTaskList[i].getEnd() : this.vTaskList[i].getPlanEnd();
@@ -574,8 +606,6 @@ export const GanttChart = function (pDiv, pFormat) {
         vTaskPlanLeftPx = getOffset(vMinDate, curTaskPlanStart, vColWidth, this.vFormat, this.vShowWeekends);
         vTaskPlanRightPx = getOffset(curTaskPlanStart, curTaskPlanEnd, vColWidth, this.vFormat, this.vShowWeekends);
       }
-
-
       const vID = this.vTaskList[i].getID();
       let vComb = (this.vTaskList[i].getParItem() && this.vTaskList[i].getParItem().getGroup() == 2);
       let vCellFormat = '';
@@ -584,15 +614,12 @@ export const GanttChart = function (pDiv, pFormat) {
       let vCaptClass = null;
       // set cell width only for first row because of table-layout:fixed
       
-      if (this.vTaskList[i].getMile() && !vComb && this.vTaskList[i].getVisible() != 0 ) {
-        let vTmpRow = newNode(vTmpTBody, 'div', this.vDivId + 'childrow_' + vID, 'gvs-row gmileitem gmile' + this.vFormat);
-        this.vTaskList[i].setChildRow(vTmpRow);
-        addThisRowListeners(this, this.vTaskList[i].getListChildRow(), vTmpRow);
+      if (this.vTaskList[i].getVisible() != 0 ){
 
-        const vTmpCell = newNode(vTmpRow, 'div', null, 'gtaskcell gtaskcellmile', null, vColWidth, null, null, null);
+      }
+      if (this.vTaskList[i].getMile() && !vComb) {
 
-        vTmpDiv = newNode(vTmpCell, 'div', null, 'gtaskcelldiv', '\u00A0\u00A0');
-        vTmpDiv = newNode(vTmpDiv, 'div', this.vDivId + 'bardiv_' + vID, 'gtaskbarcontainer', null, 12, vTaskLeftPx + vTaskRightPx - 6);
+        vTmpDiv = newNode(vTmpTBody, 'div', this.vDivId + 'bardiv_' + vID, 'gtaskbarcontainer', null, 12, vTaskLeftPx + vTaskRightPx - 6);
 
         this.vTaskList[i].setBarDiv(vTmpDiv);
         let vTmpDiv2 = newNode(vTmpDiv, 'div', this.vDivId + 'taskbar_' + vID, this.vTaskList[i].getClass(), null, 12);
@@ -607,11 +634,8 @@ export const GanttChart = function (pDiv, pFormat) {
         }
 
         vCaptClass = 'gmilecaption';
-        if (!vSingleCell && !vComb) {
-          this.drawColsChart(vNumCols, vTmpRow, taskCellWidth)
-        }
       }
-      else if (this.vTaskList[i].getListChildRow()){
+      else{
         let vTaskWidth = vTaskRightPx;
 
         // Draw Group Bar which has outer div with inner group div 
@@ -619,10 +643,6 @@ export const GanttChart = function (pDiv, pFormat) {
         if (this.vTaskList[i].getGroup()) {
           vTaskWidth = (vTaskWidth > this.vMinGpLen && vTaskWidth < this.vMinGpLen * 2) ? this.vMinGpLen * 2 : vTaskWidth; // Expand to show two end points
           vTaskWidth = (vTaskWidth < this.vMinGpLen) ? this.vMinGpLen : vTaskWidth; // expand to show one end point
-
-          const vTmpRow = newNode(vTmpTBody, 'tr', this.vDivId + 'childrow_' + vID, ((this.vTaskList[i].getGroup() == 2) ? 'glineitem gitem' : 'ggroupitem ggroup') + this.vFormat, null, null, null, ((this.vTaskList[i].getVisible() == 0) ? 'none' : null));
-          this.vTaskList[i].setChildRow(vTmpRow);
-          addThisRowListeners(this, this.vTaskList[i].getListChildRow(), vTmpRow);
 
           const vTmpCell = newNode(vTmpRow, 'td', null, 'gtaskcell gtaskcellbar', null, vColWidth, null, null);
 
@@ -640,10 +660,6 @@ export const GanttChart = function (pDiv, pFormat) {
             if (vTaskWidth >= this.vMinGpLen * 2) newNode(vTmpDiv, 'div', null, this.vTaskList[i].getClass() + 'endpointright');
 
             vCaptClass = 'ggroupcaption';
-          }
-
-          if (!vSingleCell && !vComb) {
-            this.drawColsChart(vNumCols, vTmpRow, taskCellWidth);
           }
         }
         else {
@@ -743,15 +759,13 @@ export const GanttChart = function (pDiv, pFormat) {
     return { vRightTable }
   }
 
-  this.drawColsChart = function(vNumCols, vTmpRow, taskCellWidth){
+  this.drawColsChart = function(vNumCols, vTmpRow, taskCellWidth, top){
     let vCellFormat = '';
-    for (let j = 0; j < vNumCols - 1; j++) {
+    for (let j = 0; j < vNumCols; j++) {
       if (this.vShowWeekends !== false && this.vFormat == 'day' && ((j % 7 == 4) || (j % 7 == 5))) vCellFormat = 'gtaskcellwkend';
       else vCellFormat = 'gtaskcell gtaskcellcols';
-      newNode(vTmpRow, 'div', null, vCellFormat, '\u00A0\u00A0', taskCellWidth);
-    }
-
-    
+      newNode(vTmpRow, 'div', null, vCellFormat, '\u00A0\u00A0', taskCellWidth,null,null,null,null,'absolute',top);
+    } 
   }
 
   /**
