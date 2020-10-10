@@ -26,7 +26,7 @@ div.gantt {
 .gminorheadingwkend,
 .gtaskcell,
 .gtaskcellwkend {
-  height: 19px;
+  height: 21px;
   font-size: 12px;
   border: #efefef 1px solid;
   text-align: center;
@@ -232,7 +232,8 @@ span.gfoldercollapse {
 
 /* highlight row (applied to row) */
 
-.gitemhighlight td {
+.gitemhighlight td,
+.gvs-row.gitemhighlight {
   background-image: none;
   background-color: #fffde5;
 }
@@ -1020,10 +1021,11 @@ td.gspanning div {
   display: flex;
 }
 .gvs-row > div {
-  height: 21px !important;
+  height: 22px !important;
   display: inline-flex;
   margin: -1px 0px 0px 0px;
   border-left: none;
+  border-bottom: none;
   align-items: center;
   justify-content: center;
 }
@@ -1033,10 +1035,15 @@ td.gspanning div {
 
 .gvs-tablehader {
   border: #efefef 1px solid;
+  border-bottom: none;
   width: fit-content;
   height: 42px;
 }
 
 .no-borders {
   border: none;
+}
+
+.gvs-footdates {
+  border-left: #efefef 1px solid;
 }

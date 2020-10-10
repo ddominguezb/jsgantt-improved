@@ -117,6 +117,7 @@ export const TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile
   let vWeight = 0;
   let vVisible = 1;
   let vSortIdx = 0;
+  let vTop = 0;
   let vToDelete = false;
   let x1, y1, x2, y2;
   let vNotes;
@@ -299,6 +300,7 @@ export const TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile
   this.getStartY = function () { return y1; };
   this.getEndX = function () { return x2; };
   this.getEndY = function () { return y2; };
+  this.getTop = function() { return vTop; }
   this.getVisible = function () { return vVisible; };
   this.getParItem = function () { return vParItem; };
   this.getCellDiv = function () { return vCellDiv; };
@@ -348,6 +350,7 @@ export const TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile
   this.setLevel = function (pLevel) { vLevel = parseInt(document.createTextNode(pLevel).data); };
   this.setNumKid = function (pNumKid) { vNumKid = parseInt(document.createTextNode(pNumKid).data); };
   this.setWeight = function (pWeight) { vWeight = parseInt(document.createTextNode(pWeight).data); };
+  this.setTop = function(pTop) { if ( !isNaN( parseInt(pTop) ) ){ vTop = parseInt(pTop); } }
   this.setCompVal = function (pCompVal) { vCompVal = parseFloat(document.createTextNode(pCompVal).data); };
   this.setComp = function (pComp) {
     vComp = parseInt(document.createTextNode(pComp).data);
@@ -376,8 +379,8 @@ export const TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile
   this.setBarDiv = function (pDiv) { if (typeof HTMLDivElement !== 'function' || pDiv instanceof HTMLDivElement) vBarDiv = pDiv; };
   this.setTaskDiv = function (pDiv) { if (typeof HTMLDivElement !== 'function' || pDiv instanceof HTMLDivElement) vTaskDiv = pDiv; };
   this.setPlanTaskDiv = function (pDiv) { if (typeof HTMLDivElement !== 'function' || pDiv instanceof HTMLDivElement) vPlanTaskDiv = pDiv; };
-  this.setChildRow = function (pRow) { if (typeof HTMLTableRowElement !== 'function' || pRow instanceof HTMLTableRowElement) vChildRow = pRow; };
-  this.setListChildRow = function (pRow) { if (typeof HTMLTableRowElement !== 'function' || pRow instanceof HTMLTableRowElement) vListChildRow = pRow; };
+  this.setChildRow = function (pRow) { if (typeof HTMLDivElement !== 'function' || pRow instanceof HTMLDivElement) vChildRow = pRow; };
+  this.setListChildRow = function (pRow) { if (typeof HTMLDivElement !== 'function' || pRow instanceof HTMLDivElement) vListChildRow = pRow; };
   this.setGroupSpan = function (pSpan) { if (typeof HTMLSpanElement !== 'function' || pSpan instanceof HTMLSpanElement) vGroupSpan = pSpan; };
   this.getAllData = function () {
     return {

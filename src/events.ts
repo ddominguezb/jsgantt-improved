@@ -1,3 +1,4 @@
+import { deprecate } from "util";
 import {
   delayedHide, changeFormat, stripIds, isIE, findObj, fadeToolTip, getScrollbarWidth,
   isParentElementOrSelf, updateFlyingObj
@@ -98,15 +99,29 @@ export const show = function (pID, pTop, ganttObj) {
   }
 };
 
-
+//deprecate
 export const mouseOver = function (pObj1, pObj2) {
   if (this.getUseRowHlt()) {
     pObj1.className += ' gitemhighlight';
     pObj2.className += ' gitemhighlight';
   }
 };
-
+//deprecate
 export const mouseOut = function (pObj1, pObj2) {
+  if (this.getUseRowHlt()) {
+    pObj1.className = pObj1.className.replace(/(?:^|\s)gitemhighlight(?!\S)/g, '');
+    pObj2.className = pObj2.className.replace(/(?:^|\s)gitemhighlight(?!\S)/g, '');
+  }
+};
+
+export const mouseEnter = function (pObj1, pObj2) {
+  if (this.getUseRowHlt()) {
+    pObj1.className += ' gitemhighlight';
+    pObj2.className += ' gitemhighlight';
+  }
+};
+
+export const mouseLeave = function (pObj1, pObj2) {
   if (this.getUseRowHlt()) {
     pObj1.className = pObj1.className.replace(/(?:^|\s)gitemhighlight(?!\S)/g, '');
     pObj2.className = pObj2.className.replace(/(?:^|\s)gitemhighlight(?!\S)/g, '');
@@ -266,10 +281,10 @@ export const addTooltipListeners = function (pGanttChart, pObj1, pObj2, callback
 };
 
 export const addThisRowListeners = function (pGanttChart, pObj1, pObj2) {
-  addListener('mouseover', function () { pGanttChart.mouseOver(pObj1, pObj2); }, pObj1);
-  addListener('mouseover', function () { pGanttChart.mouseOver(pObj1, pObj2); }, pObj2);
-  addListener('mouseout', function () { pGanttChart.mouseOut(pObj1, pObj2); }, pObj1);
-  addListener('mouseout', function () { pGanttChart.mouseOut(pObj1, pObj2); }, pObj2);
+  addListener('mouseenter', function () { pGanttChart.mouseEnter(pObj1, pObj2); }, pObj1);
+  addListener('mouseenter', function () { pGanttChart.mouseEnter(pObj1, pObj2); }, pObj2);
+  addListener('mouseleave', function () { pGanttChart.mouseLeave(pObj1, pObj2); }, pObj1);
+  addListener('mouseleave', function () { pGanttChart.mouseLeave(pObj1, pObj2); }, pObj2);
 };
 
 export const updateGridHeaderWidth = function (pGanttChart) {

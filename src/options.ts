@@ -102,7 +102,7 @@ export const includeGetSet = function () {
   this.setChartBody = function (pDiv) { if (typeof HTMLDivElement !== 'function' || pDiv instanceof HTMLDivElement) this.vChartBody = pDiv; };
   this.setChartHead = function (pDiv) { if (typeof HTMLDivElement !== 'function' || pDiv instanceof HTMLDivElement) this.vChartHead = pDiv; };
   this.setListBody = function (pDiv) { if (typeof HTMLDivElement !== 'function' || pDiv instanceof HTMLDivElement) this.vListBody = pDiv; };
-  this.setChartTable = function (pTable) { if (typeof HTMLTableElement !== 'function' || pTable instanceof HTMLTableElement) this.vChartTable = pTable; };
+  this.setChartTable = function (pTable) { if (typeof HTMLDivElement !== 'function' || pTable instanceof HTMLDivElement) this.vChartTable = pTable; };
   this.setLines = function (pDiv) { if (typeof HTMLDivElement !== 'function' || pDiv instanceof HTMLDivElement) this.vLines = pDiv; };
   this.setLineOptions = function (lineOptions) { this.vLineOptions = lineOptions; };
   this.setTimer = function (pVal) { this.vTimer = pVal * 1; };
