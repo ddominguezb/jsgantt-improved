@@ -340,7 +340,7 @@ export const GanttChart = function (pDiv, pFormat) {
     }
 
     // DRAW the date format selector at bottom left.
-    vTmpRow = newNode(this.vListContainer, 'div', null, 'gvs-row', null, null, null, null, null, null, 'absolute', top, this.vRowHeight);
+    vTmpRow = newNode(this.vListContainer, 'div', null, 'gvs-row gvs-footdates', null, null, null, null, null, null, 'absolute', top, this.vRowHeight);
     newNode(vTmpRow, 'div', null, 'gtasklist', '\u00A0');
     vTmpCell = newNode(vTmpRow, 'div', null, 'gspanning gtaskname');
     vTmpCell.appendChild(this.drawSelector('bottom'));

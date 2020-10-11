@@ -1047,4 +1047,11 @@ td.gspanning div {
 
 .gvs-footdates {
   border-left: #efefef 1px solid;
+  border-bottom: #efefef 1px solid;
+}
+
+.gvs-row .gtaskheading,
+.gvs-row .gmajorheading,
+.gvs-row .gminorheading {
+  background-color: transparent
 }
