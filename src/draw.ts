@@ -860,6 +860,7 @@ export const GanttChart = function (pDiv, pFormat) {
     else if (this.vFormat == 'month') vColWidth = this.vMonthColWidth;
     else if (this.vFormat == 'quarter') vColWidth = this.vQuarterColWidth;
     else if (this.vFormat == 'hour') vColWidth = this.vHourColWidth;
+    this.vColWidth = vColWidth;
 
     // DRAW the Left-side of the chart (names, resources, comp%)
     let vLeftHeader = document.createDocumentFragment();
