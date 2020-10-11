@@ -371,8 +371,6 @@ export const GanttChart = function (pDiv, pFormat) {
     let vTmpDiv = newNode(vRightHeader, 'div', this.vDivId + 'gcharthead', 'gchartlbl gcontainercol');
     const gChartLbl = vTmpDiv;
     this.setChartHead(vTmpDiv);
-    /*let vTmpTab = newNode(vTmpDiv, 'table', this.vDivId + 'chartTableh', 'gcharttableh');
-    let vTmpTBody = newNode(vTmpTab, 'tbody');*/
     let vTmpTBody = newNode(vTmpDiv, 'div', this.vDivId + 'chartTableh', 'gcharttableh gvs-tablehader');
     let vTmpRow = newNode(vTmpTBody, 'div', null, 'gvs-row');
 
@@ -627,7 +625,7 @@ export const GanttChart = function (pDiv, pFormat) {
       for (i = 0; i < this.vNumRows; i++) {
         left = startCol * this.vColWidth;
         for (j = 0; j < this.vNumCols; j++) {
-          if (this.vShowWeekends !== false && this.vFormat == 'day' && ((j % 7 == 4) || (j % 7 == 5))) vCellFormat = 'gtaskcellwkend';
+          if (this.vShowWeekends == 1 && this.vFormat == 'day' && ((j % 7 == 5) || (j % 7 == 6))) vCellFormat = 'gtaskcellwkend';
           else vCellFormat = 'gtaskcell gtaskcellcols';
           newNode(this.vChartContainer, 'div', null, vCellFormat, '\u00A0\u00A0', this.vColWidth + 1, left, null, null, null, 'absolute', top);
           left += this.vColWidth;

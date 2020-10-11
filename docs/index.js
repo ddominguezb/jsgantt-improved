@@ -40,7 +40,8 @@ function start(e) {
     vShowEndWeekDate = document.querySelector('#vShowEndWeekDate:checked') ? 1 : 0;
     vTotalHeight = document.querySelector('#vTotalHeight') ? document.querySelector('#vTotalHeight').value : undefined;
 
-    vShowWeekends = document.querySelector('#vShowWeekends:checked') ? 1 : 0;
+    //vShowWeekends = document.querySelector('#vShowWeekends:checked') ? 1 : 0;
+    vShowWeekends = true;
 
     vMinDate = document.querySelector('#vMinDate') ? document.querySelector('#vMinDate').value : undefined;
     vMaxDate = document.querySelector('#vMaxDate') ? document.querySelector('#vMaxDate').value : undefined;
