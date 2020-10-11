@@ -530,6 +530,7 @@ div.gtaskbarcontainer {
   overflow: hidden;
   text-overflow: ellipsis;
   width: 40%;
+  font-size: 12px;
   display: inline-block;
 }
 
