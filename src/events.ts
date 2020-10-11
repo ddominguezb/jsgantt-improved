@@ -280,11 +280,11 @@ export const addTooltipListeners = function (pGanttChart, pObj1, pObj2, callback
   }, pObj1);
 };
 
-export const addThisRowListeners = function (pGanttChart, pObj1, pObj2) {
+export const addThisRowListeners = function (pGanttChart, pObj1, pObj2, pDetect) {
   addListener('mouseenter', function () { pGanttChart.mouseEnter(pObj1, pObj2); }, pObj1);
-  addListener('mouseenter', function () { pGanttChart.mouseEnter(pObj1, pObj2); }, pObj2);
+  addListener('mouseenter', function () { pGanttChart.mouseEnter(pObj1, pObj2); }, pDetect);
   addListener('mouseleave', function () { pGanttChart.mouseLeave(pObj1, pObj2); }, pObj1);
-  addListener('mouseleave', function () { pGanttChart.mouseLeave(pObj1, pObj2); }, pObj2);
+  addListener('mouseleave', function () { pGanttChart.mouseLeave(pObj1, pObj2); }, pDetect);
 };
 
 export const updateGridHeaderWidth = function (pGanttChart) {
@@ -303,7 +303,9 @@ export const addFolderListeners = function (pGanttChart, pObj, pID) {
   addListener('click', function () {
     folder(pID, pGanttChart);
     updateGridHeaderWidth(pGanttChart);
-    pGanttChart.updateListContainer(pID);
+    pGanttChart.recalculateVisibleItems();
+    pGanttChart.updateListContainer();
+    pGanttChart.updateGanttView();
   }, pObj);
 };
 

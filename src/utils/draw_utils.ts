@@ -91,9 +91,9 @@ export const CalcTaskXY = function () {
 
     if (vBarDiv) {
       vList[i].setStartX(vBarDiv.offsetLeft + 1);
-      vList[i].setStartY(vParDiv.offsetTop + vBarDiv.offsetTop + vHeight - 1);
+      vList[i].setStartY(vParDiv.offsetTop + vHeight - 1);
       vList[i].setEndX(vBarDiv.offsetLeft + vBarDiv.offsetWidth + 1);
-      vList[i].setEndY(vParDiv.offsetTop + vBarDiv.offsetTop + vHeight - 1);
+      vList[i].setEndY(vParDiv.offsetTop + vHeight - 1);
     }
   }
 };
