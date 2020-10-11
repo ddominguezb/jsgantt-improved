@@ -480,7 +480,7 @@ export const createTaskInfo = function (pTask, templateStrOrFn = null) {
       }
     }
   };
-
+  
   let callback;
   if (typeof templateStrOrFn === 'function') {
     callback = () => {
@@ -497,6 +497,97 @@ export const createTaskInfo = function (pTask, templateStrOrFn = null) {
   }
 
   return { component: vTaskInfoBox, callback };
+};
+
+/**
+ * @param pTask 
+ * @param templateStrOrFn template string or function(task). In any case parameters in template string are substituted.
+ *        If string - just a static template.
+ *        If function(task): string - per task template. Can return null|undefined to fallback to default template.
+ *        If function(task): Promise<string>) - async per task template. Tooltip will show 'Loading...' if promise is not yet complete.
+ *          Otherwise returned template will be handled in the same manner as in other cases.
+ */
+export const createDynamicTaskInfo = function (pTask, templateStrOrFn = null) {
+  let vTmpDiv;
+  let vTaskInfoBox = document.createDocumentFragment();
+  let vTaskInfo = newNode(vTaskInfoBox, 'div', null, 'gTaskInfo');
+
+  const setupTemplate = template => {
+    vTaskInfo.innerHTML = "";
+    if (template) {
+      let allData = pTask.getAllData()
+      internalProperties.forEach(key => {
+        let lang;
+        if (internalPropertiesLang[key]) {
+          lang = this.vLangs[this.vLang][internalPropertiesLang[key]];
+        }
+
+        if (!lang) {
+          lang = key
+        }
+        const val = allData[key];
+
+        template = template.replace(`{{${key}}}`, val);
+        if (lang) {
+          template = template.replace(`{{Lang:${key}}}`, lang);
+        } else {
+          template = template.replace(`{{Lang:${key}}}`, key);
+        }
+      });
+      newNode(vTaskInfo, 'span', null, 'gTtTemplate', template);
+    } else {
+      newNode(vTaskInfo, 'span', null, 'gTtTitle', pTask.getName());
+      if (this.vShowTaskInfoStartDate == 1) {
+        vTmpDiv = newNode(vTaskInfo, 'div', null, 'gTILine gTIsd');
+        newNode(vTmpDiv, 'span', null, 'gTaskLabel', this.vLangs[this.vLang]['startdate'] + ': ');
+        newNode(vTmpDiv, 'span', null, 'gTaskText', formatDateStr(pTask.getStart(), this.vDateTaskDisplayFormat, this.vLangs[this.vLang]));
+      }
+      if (this.vShowTaskInfoEndDate == 1) {
+        vTmpDiv = newNode(vTaskInfo, 'div', null, 'gTILine gTIed');
+        newNode(vTmpDiv, 'span', null, 'gTaskLabel', this.vLangs[this.vLang]['enddate'] + ': ');
+        newNode(vTmpDiv, 'span', null, 'gTaskText', formatDateStr(pTask.getEnd(), this.vDateTaskDisplayFormat, this.vLangs[this.vLang]));
+      }
+      if (this.vShowTaskInfoDur == 1 && !pTask.getMile()) {
+        vTmpDiv = newNode(vTaskInfo, 'div', null, 'gTILine gTId');
+        newNode(vTmpDiv, 'span', null, 'gTaskLabel', this.vLangs[this.vLang]['duration'] + ': ');
+        newNode(vTmpDiv, 'span', null, 'gTaskText', pTask.getDuration(this.vFormat, this.vLangs[this.vLang]));
+      }
+      if (this.vShowTaskInfoComp == 1) {
+        vTmpDiv = newNode(vTaskInfo, 'div', null, 'gTILine gTIc');
+        newNode(vTmpDiv, 'span', null, 'gTaskLabel', this.vLangs[this.vLang]['completion'] + ': ');
+        newNode(vTmpDiv, 'span', null, 'gTaskText', pTask.getCompStr());
+      }
+      if (this.vShowTaskInfoRes == 1) {
+        vTmpDiv = newNode(vTaskInfo, 'div', null, 'gTILine gTIr');
+        newNode(vTmpDiv, 'span', null, 'gTaskLabel', this.vLangs[this.vLang]['resource'] + ': ');
+        newNode(vTmpDiv, 'span', null, 'gTaskText', pTask.getResource());
+      }
+      if (this.vShowTaskInfoLink == 1 && pTask.getLink() != '') {
+        vTmpDiv = newNode(vTaskInfo, 'div', null, 'gTILine gTIl');
+        let vTmpNode = newNode(vTmpDiv, 'span', null, 'gTaskLabel');
+        vTmpNode = newNode(vTmpNode, 'a', null, 'gTaskText', this.vLangs[this.vLang]['moreinfo']);
+        vTmpNode.setAttribute('href', pTask.getLink());
+      }
+      if (this.vShowTaskInfoNotes == 1) {
+        vTmpDiv = newNode(vTaskInfo, 'div', null, 'gTILine gTIn');
+        newNode(vTmpDiv, 'span', null, 'gTaskLabel', this.vLangs[this.vLang]['notes'] + ': ');
+        if (pTask.getNotes()) vTmpDiv.appendChild(pTask.getNotes());
+      }
+    }
+  };
+  if (typeof templateStrOrFn === 'function') {
+    const strOrPromise = templateStrOrFn(pTask);
+      if (!strOrPromise || typeof strOrPromise === 'string') {
+        setupTemplate(strOrPromise);
+      } else if (strOrPromise.then) {
+        setupTemplate(this.vLangs[this.vLang]['tooltipLoading'] || this.vLangs['en']['tooltipLoading']);
+        return strOrPromise.then(setupTemplate);
+      }
+  } else {
+    setupTemplate(templateStrOrFn);
+  }
+
+  return vTaskInfoBox ;
 };
 
 

@@ -192,8 +192,72 @@ export const showToolTip = function (pGanttChartObj, e, pContents, pWidth, pTime
   }
 };
 
+export const showDynamicToolTip = function (pGanttChartObj, e, idxTask, pWidth, pTimer) {
+  let vTtDivId = pGanttChartObj.getDivId() + 'JSGanttToolTip';
+  let vMaxW = 500;
+  let vMaxAlpha = 100;
+  let vShowing = idxTask;
 
+  if (pGanttChartObj.getUseToolTip()) {
+    if (pGanttChartObj.vTool == null) {
+      pGanttChartObj.vTool = document.createElement('div');
+      pGanttChartObj.vTool.id = vTtDivId;
+      pGanttChartObj.vTool.className = 'JSGanttToolTip';
+      pGanttChartObj.vTool.vToolCont = document.createElement('div');
+      pGanttChartObj.vTool.vToolCont.id = vTtDivId + 'cont';
+      pGanttChartObj.vTool.vToolCont.className = 'JSGanttToolTipcont';
+      pGanttChartObj.vTool.vToolCont.setAttribute('showing', '');
+      pGanttChartObj.vTool.appendChild(pGanttChartObj.vTool.vToolCont);
+      document.body.appendChild(pGanttChartObj.vTool);
+      pGanttChartObj.vTool.style.opacity = 0;
+      pGanttChartObj.vTool.setAttribute('currentOpacity', 0);
+      pGanttChartObj.vTool.setAttribute('fadeIncrement', 10);
+      pGanttChartObj.vTool.setAttribute('moveSpeed', 10);
+      pGanttChartObj.vTool.style.filter = 'alpha(opacity=0)';
+      pGanttChartObj.vTool.style.visibility = 'hidden';
+      pGanttChartObj.vTool.style.left = Math.floor(((e) ? e.clientX : (<MouseEvent>window.event).clientX) / 2) + 'px';
+      pGanttChartObj.vTool.style.top = Math.floor(((e) ? e.clientY : (<MouseEvent>window.event).clientY) / 2) + 'px';
+      this.addListener('mouseover', function () { clearTimeout(pGanttChartObj.vTool.delayTimeout); }, pGanttChartObj.vTool);
+      this.addListener('mouseout', function () { delayedHide(pGanttChartObj, pGanttChartObj.vTool, pTimer); }, pGanttChartObj.vTool);
+    }
+    clearTimeout(pGanttChartObj.vTool.delayTimeout);
 
+    if (pGanttChartObj.vTool.vToolCont.getAttribute("content") !== idxTask) {
+      while (pGanttChartObj.vTool.vToolCont.firstChild) {
+        pGanttChartObj.vTool.vToolCont.removeChild(pGanttChartObj.vTool.vToolCont.firstChild);
+      }
+      pGanttChartObj.vTool.vToolCont
+      pGanttChartObj.vTool.vToolCont.appendChild(pGanttChartObj.drawTooltip(idxTask));
+      // as we are allowing arbitrary HTML we should remove any tag ids to prevent duplication
+      stripIds(pGanttChartObj.vTool.vToolCont);
+      pGanttChartObj.vTool.vToolCont.setAttribute("content", idxTask);
+    }
+
+    if (pGanttChartObj.vTool.vToolCont.getAttribute('showing') != vShowing || pGanttChartObj.vTool.style.visibility != 'visible') {
+      if (pGanttChartObj.vTool.vToolCont.getAttribute('showing') != vShowing) {
+        pGanttChartObj.vTool.vToolCont.setAttribute('showing', vShowing);
+      }
+
+      pGanttChartObj.vTool.style.visibility = 'visible';
+      // Rather than follow the mouse just have it stay put
+      updateFlyingObj(e, pGanttChartObj, pTimer);
+      pGanttChartObj.vTool.style.width = (pWidth) ? pWidth + 'px' : 'auto';
+      if (!pWidth && isIE()) {
+        pGanttChartObj.vTool.style.width = pGanttChartObj.vTool.offsetWidth;
+      }
+      if (pGanttChartObj.vTool.offsetWidth > vMaxW) { pGanttChartObj.vTool.style.width = vMaxW + 'px'; }
+    }
+
+    if (pGanttChartObj.getUseFade()) {
+      clearInterval(pGanttChartObj.vTool.fadeInterval);
+      pGanttChartObj.vTool.fadeInterval = setInterval(function () { fadeToolTip(1, pGanttChartObj.vTool, vMaxAlpha); }, pTimer);
+    }
+    else {
+      pGanttChartObj.vTool.style.opacity = vMaxAlpha * 0.01;
+      pGanttChartObj.vTool.style.filter = 'alpha(opacity=' + vMaxAlpha + ')';
+    }
+  }
+};
 
 export const addListener = function (eventName, handler, control) {
   // Check if control is a string
@@ -279,6 +343,20 @@ export const addTooltipListeners = function (pGanttChart, pObj1, pObj2, callback
     delayedHide(pGanttChart, pGanttChart.vTool, pGanttChart.getTimer());
   }, pObj1);
 };
+
+export const addDynamicTooltipListeners = function(pGanttChart, pObj1, idxTask){
+
+  addListener('mouseenter', function (e) {
+    console.log('Deberia poner un tooltip de:' + idxTask);
+    showDynamicToolTip(pGanttChart, e, idxTask, null, pGanttChart.getTimer());
+  }, pObj1);
+
+  addListener('mouseleave', function (e) {
+    const outTo = e.relatedTarget;
+
+    delayedHide(pGanttChart, pGanttChart.vTool, pGanttChart.getTimer());
+  }, pObj1);
+}
 
 export const addThisRowListeners = function (pGanttChart, pObj1, pObj2, pDetect) {
   addListener('mouseenter', function () { pGanttChart.mouseEnter(pObj1, pObj2); }, pObj1);

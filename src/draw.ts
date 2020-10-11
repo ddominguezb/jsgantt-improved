@@ -5,7 +5,7 @@ import {
   mouseEnter,
   mouseLeave,
   addThisRowListeners,
-  addTooltipListeners,
+  addDynamicTooltipListeners,
   addScrollListeners,
   addFolderListeners,
   addListenerClickCell,
@@ -19,7 +19,7 @@ import {
 import {
   getOffset, getScrollbarWidth
 } from './utils/general_utils';
-import { createTaskInfo, AddTaskItem, AddTaskItemObject, RemoveTaskItem, processRows, ClearTasks } from './task';
+import { createTaskInfo, createDynamicTaskInfo, AddTaskItem, AddTaskItemObject, RemoveTaskItem, processRows, ClearTasks } from './task';
 
 import { getXMLProject, getXMLTask } from './xml';
 import { COLUMN_ORDER, draw_list_headings, draw_header, draw_bottom, draw_task_headings } from './draw_columns';
@@ -173,6 +173,7 @@ export const GanttChart = function (pDiv, pFormat) {
   this.removeListener = removeListener.bind(this);
 
   this.createTaskInfo = createTaskInfo;
+  this.createDynamicTaskInfo = createDynamicTaskInfo;
   this.AddTaskItem = AddTaskItem;
   this.AddTaskItemObject = AddTaskItemObject;
   this.RemoveTaskItem = RemoveTaskItem;
@@ -264,7 +265,7 @@ export const GanttChart = function (pDiv, pFormat) {
     let vTmpRow, vTmpCell;
     let top = startRow * this.vRowHeight;
 
-    //Limpiamos los hijos existentes
+    //Clear the previous data
     while (this.vListContainer.firstChild) {
       this.vListContainer.removeChild(this.vListContainer.firstChild);
     }
@@ -772,19 +773,13 @@ export const GanttChart = function (pDiv, pFormat) {
         }
 
         // Add Task Info div for tooltip
-        /*if (this.vTaskList[i].getTaskDiv() && vTmpDiv) {
-          const vTmpDiv2 = newNode(vTmpDiv, 'div', this.vDivId + 'tt' + vID, null, null, null, null, 'none');
-          const { component, callback } = this.createTaskInfo(this.vTaskList[i], this.vTooltipTemplate);
-          vTmpDiv2.appendChild(component);
-          addTooltipListeners(this, this.vTaskList[i].getTaskDiv(), vTmpDiv2, callback);
+        if (this.vTaskList[i].getTaskDiv() && vTmpDiv) {
+          addDynamicTooltipListeners(this, this.vTaskList[i].getTaskDiv(), i);
         }
         // Add Plan Task Info div for tooltip
         if (this.vTaskList[i].getPlanTaskDiv() && vTmpDiv) {
-          const vTmpDiv2 = newNode(vTmpDiv, 'div', this.vDivId + 'tt' + vID, null, null, null, null, 'none');
-          const { component, callback } = this.createTaskInfo(this.vTaskList[i], this.vTooltipTemplate);
-          vTmpDiv2.appendChild(component);
-          addTooltipListeners(this, this.vTaskList[i].getPlanTaskDiv(), vTmpDiv2, callback);
-        }*/
+          addDynamicTooltipListeners(this, this.vTaskList[i].getPlanTaskDiv(), i);
+        }
       }
     }
   }
@@ -996,6 +991,14 @@ export const GanttChart = function (pDiv, pFormat) {
       this.vEvents.afterDraw()
     }
   }
+
+  /**
+   * Give the Component to tootip given a task ID
+   */
+  this.drawTooltip = function (idxTask){
+    return this.createDynamicTaskInfo(this.vTaskList[idxTask], this.vTooltipTemplate);
+  }
+
 
   if (this.vDiv && this.vDiv.nodeName && this.vDiv.nodeName.toLowerCase() == 'div') this.vDivId = this.vDiv.id;
 }; //GanttChart
