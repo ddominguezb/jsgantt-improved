@@ -382,6 +382,7 @@ export const addFolderListeners = function (pGanttChart, pObj, pID) {
     folder(pID, pGanttChart);
     updateGridHeaderWidth(pGanttChart);
     pGanttChart.recalculateVisibleItems();
+    pGanttChart.calculateHeightContainers();
     pGanttChart.updateListContainer();
     pGanttChart.updateGanttView();
   }, pObj);
@@ -443,6 +444,22 @@ export const addListenerDependencies = function (vLineOptions) {
       toggleDependencies(e, vLineOptions);
     });
   }
+}
+
+export const addListenerResizeList = function(pGanttChart,vListBody){
+  addListener('resize', (e) => {
+    console.log(e);
+    pGanttChart.updateListContainer();
+
+  }, vListBody);
+}
+
+export const addListenerResizeGant = function(pGanttChart,vGantBody){
+  addListener('resize', (e) => {
+    console.log(e);
+    pGanttChart.updateGanttView();
+
+  }, vGantBody);
 }
 
 const toggleDependencies = function (e, vLineOptions) {

@@ -116,7 +116,13 @@ export const includeGetSet = function () {
       for (let vKey in this.vLangs['en']) this.vLangs[pLang][vKey] = (pVals[vKey]) ? document.createTextNode(pVals[vKey]).data : this.vLangs['en'][vKey];
     }
   };
-  this.setTotalHeight = function (pVal) { this.vTotalHeight = pVal; };
+  this.setTotalHeight = function (pVal) { 
+    if (!isNaN(parseInt(pVal))){
+      this.vTotalHeight = pVal;
+      if (this.vListBody){this.updateListContainer()}
+      if (this.vChartBody){this.updateGanttView()}
+    }
+  };
 
   // EVENTS
   this.setEvents = function (pEvents) { this.vEvents = pEvents; };
