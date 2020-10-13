@@ -17,7 +17,8 @@ import {
   addListenerInitScenario,
   syncScroll,
   updateGridHeaderWidth,
-  removeListener
+  removeListener,
+  addVirtualScrollListener
 } from './events';
 import {
   getOffset, getScrollbarWidth
@@ -199,8 +200,9 @@ export const GanttChart = function (pDiv, pFormat) {
 
   // Variables to VirtualScroll
   this.vsNodePadding = 1;
-  this.vsLastScrollTop = 0;
-  this.vsLastScrollLeft = 0;
+  this.vsLastChartScrollTop = 0;
+  this.vsLastChartScrollLeft = 0;
+  this.vsLastListScrollTop = 0;
   this.vDefaultHeight = 340;
   this.vsListBodyHeight = 0;
   this.vsChartBodyHeight = 0;
@@ -1053,6 +1055,7 @@ export const GanttChart = function (pDiv, pFormat) {
 
 
     // LISTENERS: Now all the content exists, register scroll listeners
+    addVirtualScrollListener(this,this.vListBody, this.vChartBody);
     addScrollListeners(this);
 
     // SCROLL: now check if we are actually scrolling the pane

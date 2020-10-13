@@ -470,6 +470,28 @@ export const addListenerInitScenario = function (pGanttChart, vListBody, vGantBo
   }, vGantBody);
 }
 
+export const addVirtualScrollListener = function (pGanttChart, vListBody, vGantBody){
+
+  addListener('scroll', () => {
+    if ( Math.abs(vListBody.scrollTop - pGanttChart.vsLastListScrollTop) > (pGanttChart.vsNodePadding * pGanttChart.vRowHeight) ) {
+      pGanttChart.vsLastListScrollTop = vListBody.scrollTop;
+      pGanttChart.updateListContainer();
+    }
+  }, vListBody);
+
+  addListener('scroll', () => {
+    let scrollTop = vGantBody.scrollTop;
+    let scrollLeft = vGantBody.scrollLeft;
+    if ((Math.abs(scrollLeft - pGanttChart.vsLastChartScrollLeft) > (pGanttChart.vsNodePadding * pGanttChart.vColWidth)) ||
+      (Math.abs(scrollTop - pGanttChart.vsLastChartScrollTop) > (pGanttChart.vsNodePadding * pGanttChart.vRowHeight))) {
+      vGantBody.vsLastChartScrollLeft = scrollLeft;
+      vGantBody.vsLastChartScrollTop = scrollTop;
+      pGanttChart.updateGanttView();
+    }
+  }, vGantBody);
+  
+}
+
 const toggleDependencies = function (e, vLineOptions) {
   const target: any = e.currentTarget;
   const ids = target.getAttribute('id').split('_');
