@@ -461,31 +461,23 @@ export const addListenerResizeGant = function(pGanttChart,vGantBody){
   }, vGantBody);
 }
 
-export const addListenerInitScenario = function (pGanttChart, vListBody, vGantBody){
+export const addListenerInitScenario = function (pGanttChart, vGantBody){
   addListener('transitionend', ()=>{
     pGanttChart.updateListContainer();
-  }, vListBody);
-  addListener('transitionend', ()=>{
     pGanttChart.updateGanttView();
   }, vGantBody);
 }
 
-export const addVirtualScrollListener = function (pGanttChart, vListBody, vGantBody){
-
-  addListener('scroll', () => {
-    if ( Math.abs(vListBody.scrollTop - pGanttChart.vsLastListScrollTop) > (pGanttChart.vsNodePadding * pGanttChart.vRowHeight) ) {
-      pGanttChart.vsLastListScrollTop = vListBody.scrollTop;
-      pGanttChart.updateListContainer();
-    }
-  }, vListBody);
+export const addVirtualScrollListener = function (pGanttChart, vGantBody){
 
   addListener('scroll', () => {
     let scrollTop = vGantBody.scrollTop;
     let scrollLeft = vGantBody.scrollLeft;
-    if ((Math.abs(scrollLeft - pGanttChart.vsLastChartScrollLeft) > (pGanttChart.vsNodePadding * pGanttChart.vColWidth)) ||
-      (Math.abs(scrollTop - pGanttChart.vsLastChartScrollTop) > (pGanttChart.vsNodePadding * pGanttChart.vRowHeight))) {
-      vGantBody.vsLastChartScrollLeft = scrollLeft;
-      vGantBody.vsLastChartScrollTop = scrollTop;
+    if ((Math.abs(scrollLeft - pGanttChart.getLastChartScrollLeft()) > (pGanttChart.getNodePadding() * pGanttChart.getColWidth())) ||
+      (Math.abs(scrollTop - pGanttChart.getLastChartScrollTop()) > (pGanttChart.getNodePadding() * pGanttChart.getRowHeight() ))) {
+      pGanttChart.setLastChartScrollLeft( scrollLeft );
+      pGanttChart.setLastChartScrollTop( scrollTop );
+      pGanttChart.updateListContainer();
       pGanttChart.updateGanttView();
     }
   }, vGantBody);

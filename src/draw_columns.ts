@@ -26,7 +26,7 @@ export const draw_header = function (column, i, vTmpRow, vTaskList, vEditable, v
     draw_normal_item(vTmpRow,'gresource',
                      vTaskList[i].getResource(),vEditable,'resource',vTaskList[i].getResource(),vResources, 
                      (task, e) => task.setResource(e.target.value),
-                     vEventsChange, vEvents, vTaskList, i, 'res', Draw,'change', absolute, pTop, pLeft);
+                     vEventsChange, vEvents, vTaskList, i, 'res', Draw,'change', absolute, pTop, pLeft, true);
   }
   if ('vShowDur' === column) {
     draw_normal_item(vTmpRow,'gduration',
@@ -104,8 +104,9 @@ export const draw_header = function (column, i, vTmpRow, vTaskList, vEditable, v
 };
 
 const draw_normal_item = function (vTmpRow, pID, dataFormat, vEditable, dataType, data2show, choices, callback,
-  vEventsChange, vEvents, vTaskList, i, column, draw = null, event = null, absolute = null, pTop = null, pLeft = null) {
+  vEventsChange, vEvents, vTaskList, i, column, draw = null, event = null, absolute = null, pTop = null, pLeft = null, withTooltip = null) {
   let vTmpCell = newNode(vTmpRow, 'div', null, pID,null,null,pLeft,null,null,null,absolute, pTop);
+  if (withTooltip) vTmpCell.title = dataFormat;
   const text = makeInput(dataFormat, vEditable, dataType, data2show, choices);
   newNode(vTmpCell, 'div', null, null, text);
   addListenerInputCell(vTmpCell, vEventsChange, callback, vTaskList, i, column, draw, event);

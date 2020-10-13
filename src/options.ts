@@ -119,11 +119,31 @@ export const includeGetSet = function () {
   this.setTotalHeight = function (pVal) { 
     if (!isNaN(parseInt(pVal))){
       this.vTotalHeight = pVal;
-      if (this.vListBody){this.updateListContainer()}
-      if (this.vChartBody){this.updateGanttView()}
+      if (this.vListBody && this.vChartBody){
+        this.updateListContainer();
+        this.updateGanttView();
+      }
     }
   };
 
+  this.setLastChartScrollTop = function (pVal) { this.vsLastChartScrollTop = pVal; };
+  this.setLastChartScrollLeft = function (pVal) { this.vsLastChartScrollLeft = pVal; };
+  this.setLastListScrollTop = function (pVal) { this.vsLastListScrollTop = pVal; };
+  this.setListBodyHeight = function (pVal) { this.vsListBodyHeight = pVal; };
+  this.setChartBodyHeight = function (pVal) { this.vsChartBodyHeight = pVal; };
+  this.setFirstRowIndex = function (pVal) { this.vsFirstRowIndex = pVal; };
+  this.setLastRowIndex = function (pVal) { this.vsLastRowIndex = pVal; };
+  this.setLastListBodyWidth = function (pVal) { this.reLastListBodyWidth = pVal; };
+  this.setLastChartBodyWidth = function (pVal) { this.reLastChartBodyWidth = pVal; };
+  this.setLastListBodyHeight = function (pVal) { this.reLastListBodyHeight = pVal; };
+  this.setLastChartBodyHeight = function (pVal) { this.reLastChartBodyHeight = pVal; };
+  this.setRowHeight = function(pVal) { this.vRowHeight = pVal; };
+  this.setColWidth = function(pVal) { this.vColWidth = pVal; };
+  this.setChartContainer = function(pVal) { this.vChartContainer = pVal; };
+  this.setListHead = function(pVal) { this.vListHead = pVal; };
+  this.setListContainer = function(pVal) { this.vListContainer = pVal; };
+  this.setNodePadding = function (pVal) { this.vsNodePadding = pVal; };
+  
   // EVENTS
   this.setEvents = function (pEvents) { this.vEvents = pEvents; };
   this.setEventsChange = function (pEventsChange) { this.vEventsChange = pEventsChange; };
@@ -199,6 +219,24 @@ export const includeGetSet = function () {
   this.getMaxDate = function () { return this.vMaxDate; };
   this.getTooltipDelay = function () { return this.vTooltipDelay; };
   this.getList = function () { return this.vTaskList; };
+
+  this.getLastChartScrollTop = function () { return this.vsLastChartScrollTop; };
+  this.getLastChartScrollLeft = function () { return this.vsLastChartScrollLeft; };
+  this.getLastListScrollTop = function () { return this.vsLastListScrollTop; };
+  this.getListBodyHeight = function () { return this.vsListBodyHeight; };
+  this.getChartBodyHeight = function () { return this.vsChartBodyHeight; };
+  this.getFirstRowIndex = function () { return this.vsFirstRowIndex; };
+  this.getLastRowIndex = function () { return this.vsLastRowIndex; };
+  this.getLastListBodyWidth = function () { return this.reLastListBodyWidth; };
+  this.getLastChartBodyWidth = function () { return this.reLastChartBodyWidth; };
+  this.getLastListBodyHeight = function () { return this.reLastListBodyHeight; };
+  this.getLastChartBodyHeight = function () { return this.reLastChartBodyHeight; };
+  this.getRowHeight = function() { return this.vRowHeight; };
+  this.getColWidth = function() { return this.vColWidth; };
+  this.getChartContainer = function() { return this.vChartContainer; };
+  this.getListHead = function() { return this.vListHead; };
+  this.getListContainer = function() { return this.vListContainer; };
+  this.getNodePadding = function () { return this.vsNodePadding; }
 
   //EVENTS
   this.getEventsClickCell = function () { return this.vEvents; };

@@ -52,7 +52,7 @@ export const DrawDependencies = function (vDebug = false) {
     this.clearDependencies();
 
     let vList = this.getList();
-    for (let i = this.vsFirstRowIndex; i < this.vsFastRowIndex; i++) {
+    for (let i = this.getFirstRowIndex(); i <= this.getLastRowIndex(); i++) {
       let vDepend = vList[i].getDepend();
       let vDependType = vList[i].getDepType();
       let n = vDepend.length;
