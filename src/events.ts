@@ -462,7 +462,6 @@ export const addListenerResizeGant = function(pGanttChart,vGantBody){
 }
 
 export const addListenerInitScenario = function (pGanttChart, vListBody, vGantBody){
-  addListener('resize', pGanttChart.resizeCallback, window );
   addListener('transitionend', ()=>{
     pGanttChart.updateListContainer();
   }, vListBody);
