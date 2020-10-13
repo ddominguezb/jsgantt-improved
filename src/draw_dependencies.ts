@@ -47,11 +47,12 @@ export const drawDependency = function (x1, y1, x2, y2, pType, pClass) {
 export const DrawDependencies = function (vDebug = false) {
   if (this.getShowDeps() == 1) {
 
+    console.log("Dependencias");
     this.CalcTaskXY(); //First recalculate the x,y
     this.clearDependencies();
 
     let vList = this.getList();
-    for (let i = 0; i < vList.length; i++) {
+    for (let i = this.vsFirstRowIndex; i < this.vsFastRowIndex; i++) {
       let vDepend = vList[i].getDepend();
       let vDependType = vList[i].getDepType();
       let n = vDepend.length;

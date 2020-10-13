@@ -149,8 +149,6 @@ export const GanttChart = function (pDiv, pFormat) {
   this.vTodayPx = -1;
   this.vNumCols = 0;
   this.vNumRows = 0;
-  this.vVisibleIdxItems = null;
-  this.vVisibleRowIdxItems = null;
   this.vLangs = lang;
   this.vLang = navigator.language && navigator.language in lang ? navigator.language : 'en';
   this.vChartBody = null;
@@ -197,7 +195,8 @@ export const GanttChart = function (pDiv, pFormat) {
   this.getArrayLocationByID = getArrayLocationByID.bind(this);
   this.drawSelector = drawSelector.bind(this);
 
-
+  this.vVisibleIdxItems = null;
+  this.vVisibleRowIdxItems = null;
   // Variables to VirtualScroll
   this.vsNodePadding = 1;
   this.vsLastChartScrollTop = 0;
@@ -206,6 +205,8 @@ export const GanttChart = function (pDiv, pFormat) {
   this.vDefaultHeight = 340;
   this.vsListBodyHeight = 0;
   this.vsChartBodyHeight = 0;
+  this.vsFirstRowIndex = 0;
+  this.vsFastRowIndex = 0;
   //Variables to catch resize event
   this.reTime = 0;
   this.reTimeout = false;
@@ -739,7 +740,13 @@ export const GanttChart = function (pDiv, pFormat) {
 
     let top = startRow * this.vRowHeight;
 
-    for (j = startRow; j < visibleRowsCount + startRow; j++) {
+    this.vsFirstRowIndex = this.vVisibleRowsIdxItems[startRow];
+    this.vsFastRowIndex = this.vVisibleRowsIdxItems[visibleRowsCount + startRow];
+    /** 
+     * NOTE: The first row index and last row index are the index of row items (task with a visual row in the table)
+     *       We can have another items in vVisibleIdxItems list between those index
+    **/ 
+    for (j = this.vsFirstRowIndex; j < this.vsFastRowIndex; j++) {
       i = this.vVisibleIdxItems[j];
       let curTaskStart = this.vTaskList[i].getStart() ? this.vTaskList[i].getStart() : this.vTaskList[i].getPlanStart();
       let curTaskEnd = this.vTaskList[i].getEnd() ? this.vTaskList[i].getEnd() : this.vTaskList[i].getPlanEnd();
@@ -979,24 +986,18 @@ export const GanttChart = function (pDiv, pFormat) {
       else {
         this.reTimeout = false;
         this.reInit = false;
-        console.log("Actualizo vista");
+        console.debug("Actualizo vista");
         if ( Math.abs(this.reLastChartBodyWidth -this.vChartBody.offsetWidth) > this.vColWidth ||
              Math.abs(this.reLastChartBodyHeight - this.vChartBody.offsetHeight) > this.vRowHeight ){
               
             this.reLastChartBodyWidth = this.vChartBody.offsetWidth;
             this.reLastChartBodyHeight = this.vChartBody.offsetHeight;
-            console.log("Gantt");
+            console.debug("Gantt");
             this.updateGanttView();
-        }else {
-          console.log(Math.abs(this.reLastChartBodyWidth -this.vChartBody.offsetWidth))
-          console.log("vs");
-          console.log(this.vColWidth );
-          console.log(Math.abs(this.reLastChartBodyHeight - this.vChartBody.offsetHeight))
-          console.log("vs");
-          console.log(this.vRowHeight );
         }
+
         if (Math.abs(this.reLastListBodyHeight - this.vListBody.offsetHeight) > this.vRowHeight){
-          console.log("List");
+          console.debug("List");
           this.reLastListBodyHeight = this.vListBody.offsetHeight;
           this.updateListContainer();
         }
@@ -1005,7 +1006,6 @@ export const GanttChart = function (pDiv, pFormat) {
     window.addEventListener('resize', () => {
 
       if (!this.reInit) {
-        console.log("Guardo datos vista");
         this.reInit = true;
       }
       this.reTime = (new Date()).getTime();
