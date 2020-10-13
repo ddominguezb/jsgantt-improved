@@ -866,13 +866,13 @@ td.gspanning div {
 }
 
 .gtasktableouterwrapper {
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .gtasktablewrapper {
-  overflow-x: auto;
+  overflow: hidden;
   flex: auto;
-  height: 100%;
 }
 
 .chartgrid {
@@ -1054,4 +1054,14 @@ td.gspanning div {
 .gvs-row .gmajorheading,
 .gvs-row .gminorheading {
   background-color: transparent
+}
+
+.gvs-detect-resize{
+  transition: width 0.5s, height 0.5s;
+}
+
+/* set up the keyframes; remember to create prefixed keyframes too! */
+@keyframes gvs-nodeInserted {  
+  from { opacity: 0; }
+  to { opacity: 1; }  
 }

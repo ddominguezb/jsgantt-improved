@@ -347,7 +347,7 @@ export const addTooltipListeners = function (pGanttChart, pObj1, pObj2, callback
 export const addDynamicTooltipListeners = function(pGanttChart, pObj1, idxTask){
 
   addListener('mouseenter', function (e) {
-    console.log('Deberia poner un tooltip de:' + idxTask);
+    //console.log('Deberia poner un tooltip de:' + idxTask);
     showDynamicToolTip(pGanttChart, e, idxTask, null, pGanttChart.getTimer());
   }, pObj1);
 
@@ -458,7 +458,16 @@ export const addListenerResizeGant = function(pGanttChart,vGantBody){
   addListener('resize', (e) => {
     console.log(e);
     pGanttChart.updateGanttView();
+  }, vGantBody);
+}
 
+export const addListenerInitScenario = function (pGanttChart, vListBody, vGantBody){
+  addListener('resize', pGanttChart.resizeCallback, window );
+  addListener('transitionend', ()=>{
+    pGanttChart.updateListContainer();
+  }, vListBody);
+  addListener('transitionend', ()=>{
+    pGanttChart.updateGanttView();
   }, vGantBody);
 }
 

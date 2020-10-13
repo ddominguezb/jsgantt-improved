@@ -14,6 +14,7 @@ import {
   addListenerDependencies,
   addListenerResizeList,
   addListenerResizeGant,
+  addListenerInitScenario,
   syncScroll,
   updateGridHeaderWidth,
   removeListener
@@ -155,6 +156,7 @@ export const GanttChart = function (pDiv, pFormat) {
   this.vChartHead = null;
   this.vChartDateRow = null;
   this.vChartContainer = null;
+  this.vListHead = null;
   this.vListBody = null;
   this.vListContainer = null;
   this.vChartTable = null;
@@ -202,6 +204,11 @@ export const GanttChart = function (pDiv, pFormat) {
   this.vDefaultHeight = 340;
   this.vsListBodyHeight = 0;
   this.vsChartBodyHeight = 0;
+  //Variables to catch resize event
+  this.reTime = 0;
+  this.reTimeout = false;
+  this.reDelta = 200;
+  this.reInit = false;
 
   this.clearDependencies = function () {
     let parent = this.getLines();
@@ -243,13 +250,13 @@ export const GanttChart = function (pDiv, pFormat) {
   this.drawListHead = function (vLeftHeader) {
     let vTmpDiv = newNode(vLeftHeader, 'div', this.vDivId + 'glisthead', 'glistlbl gcontainercol');
     const gListLbl = vTmpDiv;
-    let vTmpTBody = newNode(vTmpDiv, 'div', null, 'gvs-tablehader');
-    let vTmpRow = newNode(vTmpTBody, 'div', null, 'gvs-row');
+    this.vListHead = newNode(vTmpDiv, 'div', null, 'gvs-tablehader');
+    let vTmpRow = newNode(this.vListHead, 'div', null, 'gvs-row');
     newNode(vTmpRow, 'div', null, 'gtasklist no-borders', '\u00A0');
     let vTmpCell = newNode(vTmpRow, 'div', null, 'gtaskname no-borders', null, null, null, null, this.getColumnOrder().length + 1);
     vTmpCell.appendChild(this.drawSelector('top'));
 
-    vTmpRow = newNode(vTmpTBody, 'div', null, 'gvs-row');
+    vTmpRow = newNode(this.vListHead, 'div', null, 'gvs-row');
     newNode(vTmpRow, 'div', null, 'gtasklist', '\u00A0');
     newNode(vTmpRow, 'div', null, 'gtaskname', '\u00A0');
 
@@ -261,20 +268,18 @@ export const GanttChart = function (pDiv, pFormat) {
     return gListLbl;
   }
 
-  this.drawListBody = function (vLeftHeader) {
-    let vTmpContentTabOuterWrapper = newNode(vLeftHeader, 'div', null, 'gtasktableouterwrapper');
+  this.drawListBody = function (vLeftHeader, gListLbl) {
+    let vTmpContentTabOuterWrapper = newNode(vLeftHeader, 'div', null, 'gtasktableouterwrapper gvs-detect-resize');
+    vTmpContentTabOuterWrapper.style.width = "100%";
     vTmpContentTabOuterWrapper.style.height = (this.vTotalHeight ? this.vTotalHeight - this.vChartHead.offsetHeight : this.vDefaultHeight) + 'px';
     this.vsListBodyHeight = (this.vTotalHeight ? this.vTotalHeight - this.vChartHead.offsetHeight : this.vDefaultHeight);
     this.setListBody(vTmpContentTabOuterWrapper);
 
     this.vListContainer = newNode(vTmpContentTabOuterWrapper, 'div', null, 'gtasktablewrapper', null, null, null, null, null, null, 'relative');
-    this.vListContainer.style.width = '100%';
     let vNumRows = this.vNumRows;
 
-    vNumRows = this.updateListContainer();
-    
-
-    //addListenerResizeList(this,vTmpContentTabOuterWrapper);
+    syncScroll([vTmpContentTabOuterWrapper, gListLbl], 'scrollLeft');
+    //vNumRows = this.updateListContainer();
 
     return {
       vNumRows,
@@ -572,7 +577,7 @@ export const GanttChart = function (pDiv, pFormat) {
   this.drawCharBody = function (vTmpContentTabWrapper, gChartLbl, gListLbl,
     vMinDate, vSingleCell, vNumCols, vColWidth, vDateRow) {
     let vRightTable = document.createDocumentFragment();
-    const vTmpDiv = newNode(vRightTable, 'div', this.vDivId + 'gchartbody', 'gchartgrid gcontainercol');
+    const vTmpDiv = newNode(vRightTable, 'div', this.vDivId + 'gchartbody', 'gchartgrid gcontainercol gvs-detect-resize');
     vTmpDiv.style.height = (this.vTotalHeight ? this.vTotalHeight - (2*this.vRowHeight + 2) : this.vDefaultHeight) + 'px';
     this.vsChartBodyHeight = (this.vTotalHeight ? this.vTotalHeight - (2*this.vRowHeight + 2) : this.vDefaultHeight);
     this.setChartBody(vTmpDiv);
@@ -580,9 +585,8 @@ export const GanttChart = function (pDiv, pFormat) {
     this.vChartContainer = newNode(vTmpDiv, 'div', null, null, null, this.vNumCols * this.vColWidth, null, null, null, null, 'relative', null);
     this.setChartTable(this.vChartContainer);
 
-    syncScroll([vTmpContentTabWrapper, vTmpDiv], 'scrollTop');
+    syncScroll([this.vListBody, vTmpDiv], 'scrollTop');
     syncScroll([gChartLbl, vTmpDiv], 'scrollLeft');
-    syncScroll([vTmpContentTabWrapper, gListLbl], 'scrollLeft');
 
     let bd;
     if (this.vDebug) {
@@ -590,7 +594,7 @@ export const GanttChart = function (pDiv, pFormat) {
       console.info('before tasks loop', bd);
     }
 
-    this.updateCharBody();
+    //this.updateCharBody();
 
     //addListenerResizeGant(this,vTmpDiv);
 
@@ -671,12 +675,11 @@ export const GanttChart = function (pDiv, pFormat) {
       visibleRowsCount = Math.ceil(bodyHeight/ this.vRowHeight) + 2 * this.vsNodePadding;
       visibleRowsCount = Math.min(this.vNumRows - startRow, visibleRowsCount);
 
-      startCol = Math.floor(this.vChartBody.scrollLeft / this.vRowHeight) - this.vsNodePadding;
+      startCol = Math.floor(this.vChartBody.scrollLeft / this.vColWidth) - this.vsNodePadding;
       startCol = Math.max(0, startCol);
 
-      visibleColsCount = Math.ceil(bodyWidth/ this.vRowHeight) + 2 * this.vsNodePadding;
+      visibleColsCount = Math.ceil(bodyWidth/ this.vColWidth) + 2 * this.vsNodePadding;
       visibleColsCount = Math.min(this.vNumCols - startCol, visibleColsCount);
-
 
       top = startRow * this.vRowHeight;
       for (i = startRow; i < visibleRowsCount + startRow; i++) {
@@ -945,7 +948,7 @@ export const GanttChart = function (pDiv, pFormat) {
      * LIST BODY
     */
     const { vNumRows,
-      vTmpContentTabWrapper } = this.drawListBody(vLeftHeader);
+      vTmpContentTabWrapper } = this.drawListBody(vLeftHeader, gListLbl);
 
 
     /**
@@ -959,7 +962,10 @@ export const GanttChart = function (pDiv, pFormat) {
      * CHART GRID
      */
     const { vRightTable } = this.drawCharBody(vTmpContentTabWrapper, gChartLbl, gListLbl,
-      vMinDate, vSingleCell, vNumCols, vColWidth, vDateRow)
+      vMinDate, vSingleCell, vNumCols, vColWidth, vDateRow);
+
+    this.calculateHeightContainers();
+    addListenerInitScenario(this,this.vListBody,this.vChartBody);
 
     if (this.vDebug) {
       const ad = new Date();
@@ -1034,7 +1040,10 @@ export const GanttChart = function (pDiv, pFormat) {
       console.info('before DrawDependencies', bdd);
     }
 
-    this.updateDependencies();
+    this.vListContainer.style.width = this.vListHead.offsetWidth + 'px';
+
+    this.updateListContainer();
+    this.updateGanttView();
 
     // EVENTS
     if (this.vEvents && typeof this.vEvents.afterLineDraw === 'function') {
@@ -1074,6 +1083,37 @@ export const GanttChart = function (pDiv, pFormat) {
     return this.createDynamicTaskInfo(this.vTaskList[idxTask], this.vTooltipTemplate);
   }
 
+  this.resizeCallback = function () {
+    if (!this.reInit) {
+      this.resizeStart();
+      this.reInit = true;
+    }
+    this.reTime = (new Date()).getTime();
+    if (this.reTimeout === false) {
+      this.reTimeout = true;
+      setTimeout(this.resizeEndCallback, this.reDelta);
+    }
+
+  }
+
+  this.resizeEndCallback = function(){
+    let now = new Date();
+    if (now.getTime()  - this.reTime < this.reDelta) {
+      setTimeout(this.resizeEndCallback, this.reDelta);
+    } else {
+      this.reTimeout = false;
+      this.reInit = false;
+      this.resizeEnd();
+    }
+  }
+
+  this.resizeStart = function(){
+    console.log("Inicia el resize");
+  }
+
+  this.resizeEnd = function(){
+    console.log("Termina el resize");
+  }
 
   if (this.vDiv && this.vDiv.nodeName && this.vDiv.nodeName.toLowerCase() == 'div') this.vDivId = this.vDiv.id;
 }; //GanttChart
