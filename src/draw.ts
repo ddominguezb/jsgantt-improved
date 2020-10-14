@@ -233,9 +233,81 @@ export const GanttChart = function (pDiv, pFormat) {
     //Cleaning the list of visible rows items
     this.vVisibleRowsIdxItems = [];
     let i: number, vComb: boolean;
+    let percentagePadding = Math.floor(0.15 * this.vRowHeight);
+
     for (i = 0; i < this.vTaskList.length; i++) {
       if (this.vTaskList[i].getVisible() != 0) {
+
         vComb = (this.vTaskList[i].getParItem() && this.vTaskList[i].getParItem().getGroup() == 2);
+
+        let curTaskStart = this.vTaskList[i].getStart() ? this.vTaskList[i].getStart() : this.vTaskList[i].getPlanStart();
+
+        let curTaskEnd = this.vTaskList[i].getEnd() ? this.vTaskList[i].getEnd() : this.vTaskList[i].getPlanEnd();
+
+        const vTaskLeftPx = getOffset(this.vMinDate, curTaskStart, this.vColWidth, this.vFormat, this.vShowWeekends);
+
+        const vTaskRightPx = getOffset(curTaskStart, curTaskEnd, this.vColWidth, this.vFormat, this.vShowWeekends);
+
+        let curTaskPlanStart, curTaskPlanEnd;
+
+        curTaskPlanStart = this.vTaskList[i].getPlanStart();
+
+        curTaskPlanEnd = this.vTaskList[i].getPlanEnd();
+
+        let vTaskPlanLeftPx = 0;
+
+        let vTaskPlanRightPx = 0;
+
+        if (curTaskPlanStart && curTaskPlanEnd) {
+
+          vTaskPlanLeftPx = getOffset(this.vMinDate, curTaskPlanStart, this.vColWidth, this.vFormat, this.vShowWeekends);
+
+          vTaskPlanRightPx = getOffset(curTaskPlanStart, curTaskPlanEnd, this.vColWidth, this.vFormat, this.vShowWeekends);
+
+        }
+
+        top = this.vTaskList[i].getTop() + percentagePadding;
+
+        if (this.vTaskList[i].getMile() && !vComb) {
+
+          //vTmpDiv = newNode(this.vChartContainer, 'div', this.vDivId + 'bardiv_' + vID, 'gtaskbarcontainer', null, 12, vTaskLeftPx + vTaskRightPx - 6, null, null, null, 'absolute', top);
+          this.vTaskList[i].setBarTop(top);
+          this.vTaskList[i].setBarLeft(vTaskLeftPx + vTaskRightPx - 6);
+          this.vTaskList[i].setBarWidth(12);
+
+        }else {
+
+          let vTaskWidth = vTaskRightPx;
+
+          // Draw Group Bar which has outer div with inner group div  
+
+          // and several small divs to left and right to create angled-end indicators 
+
+          if (this.vTaskList[i].getGroup()) {
+
+            vTaskWidth = (vTaskWidth > this.vMinGpLen && vTaskWidth < this.vMinGpLen * 2) ? this.vMinGpLen * 2 : vTaskWidth; // Expand to show two end points 
+
+            vTaskWidth = (vTaskWidth < this.vMinGpLen) ? this.vMinGpLen : vTaskWidth; // expand to show one end point 
+
+            if (this.vTaskList[i].getGroup() == 1) {
+
+              //vTmpDiv = newNode(this.vChartContainer, 'div', this.vDivId + 'bardiv_' + vID, 'gtaskbarcontainer', null, vTaskWidth, vTaskLeftPx, null, null, null, 'absolute', top);
+              this.vTaskList[i].setBarTop(top);
+              this.vTaskList[i].setBarLeft(vTaskLeftPx);
+              this.vTaskList[i].setBarWidth(vTaskWidth);
+
+            }
+
+          }else {
+            vTaskWidth = (vTaskWidth <= 0) ? 1 : vTaskWidth;
+
+            //vTmpDiv = newNode(this.vChartContainer, 'div', this.vDivId + 'bardiv_' + vID, 'gtaskbarcontainer', null, vTaskWidth, vTaskLeftPx, null, null, null, 'absolute', top);
+            this.vTaskList[i].setBarTop(top);
+            this.vTaskList[i].setBarLeft(vTaskLeftPx);
+            this.vTaskList[i].setBarWidth(vTaskWidth);
+          }
+
+        }
         if ((this.vTaskList[i].getMile() && !vComb) || (this.vTaskList[i].getGroup() || !vComb)) {
           this.vVisibleRowsIdxItems.push(i);
         }
