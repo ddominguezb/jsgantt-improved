@@ -130,6 +130,11 @@ export const TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile
   let vChildRow = null;
   let vGroupSpan = null;
 
+  let vsBarLeft = 0;
+  let vsBarTop = 0;
+  let vsBarWidth = 0;
+  let vsChildTop = 0;
+
   vNotes = document.createElement('span');
   vNotes.className = 'gTaskNotes';
   if (pNotes != null) {
@@ -288,6 +293,15 @@ export const TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile
     }
     return vDuration;
   }
+
+  this.getBarLeft = function() { return vsBarLeft; };
+  this.getBarTop = function() { return vsBarTop; };
+  this.getBarWidth = function() { return vsBarWidth; };
+  this.getChildTop = function() { return vsChildTop; };
+  this.setBarLeft = function(pVal) { vsBarLeft = pVal; };
+  this.setBarTop = function(pVal) { vsBarTop = pVal; };
+  this.setBarWidth = function(pVal) { vsBarWidth = pVal; };
+  this.setChildTop = function(pVal) { vsChildTop = pVal; };
 
   this.getBarText = function () { return vBarText; };
   this.getParent = function () { return vParent; };

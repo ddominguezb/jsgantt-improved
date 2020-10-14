@@ -137,7 +137,6 @@ export const includeGetSet = function () {
   this.setLastChartBodyWidth = function (pVal) { this.reLastChartBodyWidth = pVal; };
   this.setLastListBodyHeight = function (pVal) { this.reLastListBodyHeight = pVal; };
   this.setLastChartBodyHeight = function (pVal) { this.reLastChartBodyHeight = pVal; };
-  this.setRowHeight = function(pVal) { this.vRowHeight = pVal; };
   this.setColWidth = function(pVal) { this.vColWidth = pVal; };
   this.setChartContainer = function(pVal) { this.vChartContainer = pVal; };
   this.setListHead = function(pVal) { this.vListHead = pVal; };
@@ -231,7 +230,6 @@ export const includeGetSet = function () {
   this.getLastChartBodyWidth = function () { return this.reLastChartBodyWidth; };
   this.getLastListBodyHeight = function () { return this.reLastListBodyHeight; };
   this.getLastChartBodyHeight = function () { return this.reLastChartBodyHeight; };
-  this.getRowHeight = function() { return this.vRowHeight; };
   this.getColWidth = function() { return this.vColWidth; };
   this.getChartContainer = function() { return this.vChartContainer; };
   this.getListHead = function() { return this.vListHead; };

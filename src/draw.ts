@@ -903,7 +903,7 @@ export const GanttChart = function (pDiv, pFormat) {
     }
 
     this.updateCharBody();
-    this.updateDependencies();
+    //this.updateDependencies();
   }
   /**
    * 
@@ -1100,7 +1100,7 @@ export const GanttChart = function (pDiv, pFormat) {
 
     this.updateListContainer();
     this.updateGanttView();
-    //this.updateDependencies();
+    this.updateDependencies();
 
     // EVENTS
     if (this.vEvents && typeof this.vEvents.afterLineDraw === 'function') {
